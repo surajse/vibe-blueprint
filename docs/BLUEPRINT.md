@@ -213,7 +213,7 @@ Fix: Ek source of truth, short rules, koi contradiction nahi.
 
 **Q39. Bahut saare rules daalne se kya hota hai?**
 A: Instruction overload: AI kuch rules ignore kar deta hai.
-Fix: Always-on rules sirf 10–12, baaki `globs` se scoped.
+Fix: Always-on rules sirf 10–12 aur combined ~2000 tokens ke andar, baaki `globs` se scoped.
 
 **Q40. Agent unrequested refactor kyun karta hai?**
 A: Helpful dikhne ki tendency + broad prompt.
@@ -409,7 +409,7 @@ Plan -> Changes (file list) -> Verification output -> Risks/Assumptions -> Next 
 
 ### 4.3 `.cursor/rules/*.mdc`
 
-> **Dhyan:** Rules sirf `.mdc` extension me kaam karte hain. Plain `.md` rules folder me ignore ho jati hai. Har rule 500 lines se chhota rakho.
+> **Dhyan:** Rules sirf `.mdc` extension me kaam karte hain. Plain `.md` rules folder me ignore ho jati hai. Har rule 500 lines se chhota rakho. Always-on (`alwaysApply: true`) rules ka combined size ~2000 tokens ke andar rakho — yeh har session ka context budget khate hain.
 
 **`000-core.mdc`**
 
@@ -651,6 +651,9 @@ echo "VERIFY OK"
 ### 4.9 `.github/workflows/ci.yml`
 
 ```yaml
+# Action pins last verified 2026-10-04. ALWAYS re-verify majors at bootstrap:
+# old action runtimes get retired (e.g. github/codeql-action v3 was removed Dec 2026,
+# actions/* v4 still ran on the retired Node 20 runtime).
 name: CI
 on:
   pull_request:
@@ -661,9 +664,9 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 # check latest major at bootstrap
-      - uses: pnpm/action-setup@v4 # reads packageManager from package.json
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7 # pins last verified 2026-10-04; re-verify majors at bootstrap
+      - uses: pnpm/action-setup@v6 # reads packageManager from package.json
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -673,10 +676,10 @@ jobs:
   secrets-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -685,11 +688,11 @@ jobs:
     permissions:
       security-events: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
+      - uses: actions/checkout@v7
+      - uses: github/codeql-action/init@v4
         with:
           languages: javascript-typescript
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@v4
 ```
 
 ### 4.10 `.github/PULL_REQUEST_TEMPLATE.md`
@@ -750,7 +753,7 @@ PHASE A — Root config
 Create: package.json (scripts as in Section 4.8), pnpm-workspace.yaml (apps/*,
 packages/*), turbo.json (tasks: build, lint, typecheck, test, dev), tsconfig.base.json
 (strict: true, noUncheckedIndexedAccess: true), .prettierrc, .editorconfig, .gitignore,
-.nvmrc (current Node LTS; verify), eslint config, .cursorignore.
+.nvmrc (exact Node version, e.g. 24.20.0 — never "lts/*"; record the pin date. Node 24 was active LTS until 2026-10-20, Node 26 became LTS 2026-10-28; re-verify quarterly), eslint config, .cursorignore.
 Verify: `pnpm install` succeeds.
 
 PHASE B — Walking skeleton
@@ -995,13 +998,14 @@ with the correct fact. Keep it concise. Show the diff.
 
 ### 8.2 Doosre platforms (Lovable, Bolt, Replit, v0, Windsurf, Claude Code)
 
-| Is repo ka hissa                 | Platform me kahan jaata hai                                                      |
-| -------------------------------- | -------------------------------------------------------------------------------- |
-| `AGENTS.md`                      | Custom instructions / Project knowledge / `CLAUDE.md` (Claude Code)              |
-| `docs/PRD.md`, `ARCHITECTURE.md` | Knowledge files ya repo me hi rakho aur prompt me reference do                   |
-| `prompts/*.md`                   | Paste karke chalao                                                               |
-| GitHub repo                      | Platform ka GitHub import/sync (jahan available ho). **Repo hi canonical rahe.** |
-| `.github/workflows/ci.yml`       | GitHub pe hi chalega, platform se independent                                    |
+| Is repo ka hissa                 | Platform me kahan jaata hai                                                                                                             |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `AGENTS.md`                      | Custom instructions / Project knowledge / `CLAUDE.md` (Claude Code)                                                                     |
+| `docs/PRD.md`, `ARCHITECTURE.md` | Knowledge files ya repo me hi rakho aur prompt me reference do                                                                          |
+| `prompts/*.md`                   | Paste karke chalao                                                                                                                      |
+| GitHub repo                      | Platform ka GitHub import/sync (jahan available ho). **Repo hi canonical rahe.**                                                        |
+| `.github/workflows/ci.yml`       | GitHub pe hi chalega, platform se independent                                                                                           |
+| Reusable prompts (stable wale)   | Agent Skills format (`SKILL.md`) me pack karo — 2026 ka cross-platform standard, Cursor / Claude Code / Windsurf sab support karte hain |
 
 **Rule:** platform ke andar jo AI ne banaya, woh GitHub me sync hona chahiye. Platform ke andar bane context (chat history) ko memory mat maano. Har session ke end me `PROGRESS.md` update karo.
 
