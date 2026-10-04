@@ -121,6 +121,18 @@ Add a failing example import to a test or PR description to prove the rule fires
 ## Data model starter (generic; P2 makes it product-specific)
 
 ```sql
+-- Shared helper: keep updated_at honest
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
 -- profiles: 1-1 with auth.users
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -130,8 +142,39 @@ create table public.profiles (
   updated_at timestamptz not null default now()
 );
 alter table public.profiles enable row level security;
-create policy "profiles: owner read"   on public.profiles for select using (auth.uid() = id);
-create policy "profiles: owner update" on public.profiles for update using (auth.uid() = id);
+
+create policy "profiles: owner read" on public.profiles
+  for select to authenticated
+  using ((select auth.uid()) = id);
+
+create policy "profiles: owner update" on public.profiles
+  for update to authenticated
+  using ((select auth.uid()) = id)
+  with check ((select auth.uid()) = id);
+-- No insert/delete policy on purpose: the row is created by the trigger below
+-- and removed by the auth.users cascade.
+
+create trigger profiles_set_updated_at
+  before update on public.profiles
+  for each row execute function public.set_updated_at();
+
+-- Create the profile row when a user signs up
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.profiles (id, display_name)
+  values (new.id, new.raw_user_meta_data ->> 'display_name');
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
 
 -- Pattern for every user-owned table
 create table public.items (
@@ -143,9 +186,20 @@ create table public.items (
 );
 create index items_user_id_idx on public.items(user_id);
 alter table public.items enable row level security;
+
 create policy "items: owner all" on public.items
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+create trigger items_set_updated_at
+  before update on public.items
+  for each row execute function public.set_updated_at();
 ```
+
+> `(select auth.uid())` ko subselect me wrap karna Supabase ka documented performance
+> pattern hai (per-row function call ke bajaye ek baar evaluate hota hai). `security definer`
+> function me `set search_path = ''` rakho. RLS tests chalao: anon denied, cross-user denied.
 
 ## Auth flow
 

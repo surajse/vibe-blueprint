@@ -6,28 +6,33 @@
 > pinned and verified. Shared dev-tool versions live in `pnpm-workspace.yaml` (`catalog:`).
 > Changing the stack requires an ADR.
 
-| Layer            | Choice                                                          | Anti-hallucination reason                   | Alternative        |
-| ---------------- | --------------------------------------------------------------- | ------------------------------------------- | ------------------ |
-| Monorepo         | pnpm workspaces + Turborepo                                     | One place for shared types, one `verify`    | Nx                 |
-| Language         | TypeScript (strict)                                             | The compiler catches AI mistakes            | n/a                |
-| Web              | Next.js (App Router) + React                                    | Large ecosystem, official docs              | Remix, SvelteKit   |
-| Styling / UI     | Tailwind CSS + shadcn/ui                                        | Code lives in your repo, the AI can read it | Mantine            |
-| Mobile           | Expo (React Native) + Expo Router                               | Managed workflow = fewer native errors      | Flutter            |
-| State / fetching | TanStack Query                                                  | One data-fetch pattern                      | SWR                |
-| Forms            | React Hook Form + Zod                                           | Shared schema validation                    | n/a                |
-| Validation       | Zod (packages/shared)                                           | One schema: web + mobile + API              | Valibot            |
-| API              | REST `/api/v1` via Next.js Route Handlers                       | Web and mobile share one contract           | tRPC               |
-| Backend/DB       | Supabase (Postgres, Auth, Storage, Realtime)                    | SQL migrations + generated types            | Neon + Auth.js     |
-| DB access        | supabase-js + repository layer + generated types                | One way to touch the DB                     | Drizzle / Prisma   |
-| Authorization    | Postgres RLS                                                    | DB-level security the AI cannot bypass      | App-level checks   |
-| Payments (opt.)  | Stripe (+ webhooks)                                             | Idempotency keys, signed webhooks           | Razorpay           |
-| Email (opt.)     | Resend                                                          | Simple API                                  | Postmark           |
-| AI/agents (opt.) | Provider-agnostic LLM gateway + Zod tool schemas + eval harness | Prompt versioning, tests for tools          | n/a                |
-| Tests            | Vitest, Testing Library, Playwright (web), Maestro (mobile)     | Tests = deterministic spec                  | Jest, Detox        |
-| Quality          | ESLint, Prettier, Husky, lint-staged, commitlint                | Ends style debates                          | Biome              |
-| CI/CD            | GitHub Actions, CodeQL, gitleaks, Dependabot                    | Machine reviewers                           | GitLab CI          |
-| Hosting          | Vercel (web), EAS (mobile), Supabase (data)                     | Preview per PR                              | Cloudflare, Fly.io |
-| Observability    | Sentry (errors), PostHog (analytics), `/api/health`             | Production mistakes surface fast            | Datadog            |
+| Layer                              | Choice                                                          | Anti-hallucination reason                       | Alternative          |
+| ---------------------------------- | --------------------------------------------------------------- | ----------------------------------------------- | -------------------- |
+| Monorepo                           | pnpm workspaces + Turborepo                                     | One place for shared types, one `verify`        | Nx                   |
+| Language                           | TypeScript (strict)                                             | The compiler catches AI mistakes                | n/a                  |
+| Web                                | Next.js (App Router) + React                                    | Large ecosystem, official docs                  | Remix, SvelteKit     |
+| Styling / UI                       | Tailwind CSS + shadcn/ui                                        | Code lives in your repo, the AI can read it     | Mantine              |
+| Mobile                             | Expo (React Native) + Expo Router                               | Managed workflow = fewer native errors          | Flutter              |
+| State / fetching                   | TanStack Query                                                  | One data-fetch pattern                          | SWR                  |
+| Forms                              | React Hook Form + Zod                                           | Shared schema validation                        | n/a                  |
+| Validation                         | Zod (packages/shared)                                           | One schema: web + mobile + API                  | Valibot              |
+| API                                | REST `/api/v1` via Next.js Route Handlers                       | Web and mobile share one contract               | tRPC                 |
+| Backend/DB                         | Supabase (Postgres, Auth, Storage, Realtime)                    | SQL migrations + generated types                | Neon + Auth.js       |
+| DB access                          | supabase-js + repository layer + generated types                | One way to touch the DB                         | Drizzle / Prisma     |
+| Authorization                      | Postgres RLS                                                    | DB-level security the AI cannot bypass          | App-level checks     |
+| Payments (physical goods/services) | Stripe / Razorpay + signed webhooks                             | Idempotency keys, signed webhooks               | n/a                  |
+| Payments (digital goods, Android)  | Google Play Billing (direct or wrapper service)                 | Policy-driven; Stripe is the wrong default here | n/a                  |
+| Push                               | `expo-notifications` + FCM                                      | Official docs, real-device test                 | OneSignal            |
+| Deep links                         | Android App Links + Expo Router linking                         | Verifiable via `assetlinks.json`                | n/a                  |
+| Account deletion                   | In-app flow + public web URL                                    | Play policy requirement                         | n/a                  |
+| Android health                     | Play Console Android vitals + Sentry                            | Prod crashes/ANRs surface fast                  | Firebase Crashlytics |
+| Email (opt.)                       | Resend                                                          | Simple API                                      | Postmark             |
+| AI/agents (opt.)                   | Provider-agnostic LLM gateway + Zod tool schemas + eval harness | Prompt versioning, tests for tools              | n/a                  |
+| Tests                              | Vitest, Testing Library, Playwright (web), Maestro (mobile)     | Tests = deterministic spec                      | Jest, Detox          |
+| Quality                            | ESLint, Prettier, Husky, lint-staged, commitlint                | Ends style debates                              | Biome                |
+| CI/CD                              | GitHub Actions, CodeQL, gitleaks, Dependabot                    | Machine reviewers                               | GitLab CI            |
+| Hosting                            | Vercel (web), EAS (mobile), Supabase (data)                     | Preview per PR                                  | Cloudflare, Fly.io   |
+| Observability                      | Sentry (errors), PostHog (analytics), `/api/health`             | Production mistakes surface fast                | Datadog              |
 
 ## Pinned at bootstrap (2026-10-04, verified via `npm view`)
 
