@@ -1,0 +1,12 @@
+---
+description: Expo / React Native conventions
+globs: apps/mobile/**
+alwaysApply: false
+---
+
+- Expo managed workflow + Expo Router. No ejecting without an ADR.
+- Install packages with `npx expo install <pkg>` so versions match the Expo SDK.
+- No native-module code unless the Expo SDK provides it; ask first.
+- Handle permissions, offline state, keyboard avoidance, safe areas.
+- Reuse validation + types from packages/shared. API calls via the shared api client.
+- Test critical flows with Maestro; paste emulator logs when debugging.

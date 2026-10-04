@@ -1,0 +1,12 @@
+---
+description: Next.js web app conventions
+globs: apps/web/**
+alwaysApply: false
+---
+
+- Next.js App Router, TypeScript strict, Tailwind + shadcn/ui components.
+- Server Components by default; add "use client" only when needed.
+- Data access only via the service/repository layers, never directly in components.
+- Forms: React Hook Form + Zod schema from packages/shared.
+- Every route has loading, empty and error UI. Accessibility: semantic HTML, labels, focus states.
+- Verify Next.js APIs against the official docs for the INSTALLED version before use.

@@ -1,0 +1,11 @@
+---
+description: Testing conventions
+globs: **/*.test.ts, **/*.test.tsx, e2e/**
+alwaysApply: false
+---
+
+- Test behavior, not implementation. Arrange-Act-Assert. Descriptive names.
+- Never modify an existing test to make it pass unless the spec changed; explain why.
+- Unit: Vitest. Web e2e: Playwright. Mobile e2e: Maestro.
+- No real network calls in unit tests; e2e uses a local/test database.
+- A bug fix must start with a failing regression test.

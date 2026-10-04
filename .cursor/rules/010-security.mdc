@@ -1,0 +1,14 @@
+---
+description: Security baseline, always on
+globs:
+alwaysApply: true
+---
+
+- Never hardcode secrets. Read config via the typed env module only.
+- Validate ALL external input with Zod at the boundary (API, forms, webhooks).
+- Database: Row Level Security ON for every table; write policies with tests.
+- Never trust client-supplied user IDs; derive from the verified session.
+- Parameterized queries only. No string-built SQL.
+- Never log tokens, passwords, PII.
+- Add rate limiting to auth and any expensive endpoint.
+- Escape/encode user content; no dangerouslySetInnerHTML without sanitization.

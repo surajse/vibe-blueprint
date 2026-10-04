@@ -1,0 +1,11 @@
+---
+description: Database and migrations
+globs: supabase/**, packages/db/**
+alwaysApply: false
+---
+
+- Schema changes ONLY via new migration files in supabase/migrations. Never edit old ones.
+- After each migration: regenerate TS types, update docs/DATA_MODEL.md.
+- Every table: primary key, created_at, updated_at, RLS enabled + policies + RLS tests.
+- Add indexes for every foreign key and every frequent filter.
+- Do not invent column names; read DATA_MODEL.md and the generated types.

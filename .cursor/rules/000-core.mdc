@@ -1,0 +1,13 @@
+---
+description: Core engineering rules for every task
+globs:
+alwaysApply: true
+---
+
+- Follow AGENTS.md. If a rule here conflicts with it, AGENTS.md wins.
+- Plan first, then code. Wait for approval on plans touching >5 files.
+- One task per chat. Stay inside the task's allowed-files list.
+- Verify before claiming done: run `pnpm verify`, paste the output.
+- Prefer existing utilities/components. Search before creating.
+- Small, reviewable diffs. Conventional Commits (feat:, fix:, chore:, docs:, test:).
+- Say "I don't know" instead of guessing. Cite the file or doc you relied on.

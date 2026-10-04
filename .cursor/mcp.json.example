@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "example-docs": {
+      "command": "npx",
+      "args": ["-y", "<your-docs-mcp-package>"],
+      "env": {
+        "EXAMPLE_API_KEY": "<set-in-your-shell-or-secret-store-never-here>"
+      }
+    }
+  }
+}

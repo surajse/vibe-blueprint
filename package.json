@@ -1,0 +1,24 @@
+{
+  "name": "vibe-blueprint",
+  "private": true,
+  "packageManager": "pnpm@12.9.1",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format:check": "prettier --check .",
+    "format": "prettier --write .",
+    "verify": "bash scripts/verify.sh"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.12.0",
+    "prettier": "3.9.9",
+    "turbo": "2.11.7",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.0",
+    "vitest": "4.1.11"
+  }
+}
