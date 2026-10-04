@@ -28,3 +28,8 @@ updates:
     groups:
       actions:
         patterns: ['*']
+    ignore:
+      # Action majors are deliberate, manual upgrades (quarterly review, docs/FRESHNESS.md),
+      # not bot surprises. Remove an entry here when you decide to upgrade.
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
