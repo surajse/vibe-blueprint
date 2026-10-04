@@ -3,9 +3,12 @@
 [![CI](https://github.com/surajse/vibe-blueprint/actions/workflows/ci.yml/badge.svg)](https://github.com/surajse/vibe-blueprint/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Make AI-assisted ("vibe") coding reliable.** A GitHub template repository that
-keeps context in files (not chat), enforces strict rules, slices work into small
-tasks, and verifies everything with automated gates.
+**Make AI-assisted ("vibe") coding reliable.** A production-ready GitHub template
+repository and starter boilerplate for building apps with Cursor AI and coding
+agents — Next.js web apps, Expo React Native Android apps, Supabase backend, all
+the way to Play Store launch. It keeps context in files (not chat), enforces
+strict anti-hallucination rules, slices work into small tasks, and verifies
+everything with automated gates.
 
 The full playbook — 100-question debate, 7-layer anti-hallucination system,
 prompts, stack, architecture, PRD — lives in [`docs/BLUEPRINT.md`](docs/BLUEPRINT.md).
