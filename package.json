@@ -22,7 +22,7 @@
     "format": "prettier --write .",
     "check:docs": "node scripts/check-docs.mjs",
     "audit:deps": "pnpm audit --audit-level high",
-    "verify": "bash scripts/verify.sh"
+    "verify": "node scripts/verify.mjs"
   },
   "devDependencies": {
     "@eslint/js": "catalog:",

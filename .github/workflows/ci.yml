@@ -60,6 +60,9 @@ jobs:
       - uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Required only for ORGANIZATION-owned repos (free key: gitleaks.io).
+          # Personal repos scan fine without it.
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
   codeql:
     runs-on: ubuntu-latest
