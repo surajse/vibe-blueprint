@@ -16,7 +16,10 @@ const SCAN = [
 ];
 // Files that are intentionally created later by a prompt (P0/P3/P8...), not part of the template.
 const CREATED_LATER = new Set(['docs/discovery.md']);
-const SKIP_FILE = new Set(['docs/BLUEPRINT.md']); // long-form playbook with illustrative trees
+const SKIP_FILE = new Set([
+  'docs/BLUEPRINT.md', // long-form playbook with illustrative trees
+  'prompts/U-upgrade-to-v1.md', // v1.0 plan: references files its own phases create later
+]);
 const REF =
   /(?:^|[\s`(\[@])((?:docs|prompts|scripts|\.github|\.cursor|\.agents)\/[A-Za-z0-9_./-]*\.(?:mdc|md|mjs|sh|yml|yaml|json)(?![A-Za-z0-9]))/g;
 

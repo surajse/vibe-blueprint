@@ -421,9 +421,9 @@ Fix: `PROGRESS.md` me weekly metrics: first-pass `pnpm verify` rate, Gotchas lea
 > tag for the 7-layer system that owns the fix. **🔎** = tied to a tool, platform or
 > policy that changes often — re-verify quarterly (`docs/FRESHNESS.md`).
 > Q96–Q100 of the original set are covered in Part D above.
-**Q101 [L6] Why do type errors get "fixed" with `any` and casts?**
-A: It is the fastest path to green.
-Fix: Enforce `@typescript-eslint/no-explicit-any`, `no-non-null-assertion` and `ban-ts-comment` in lint. Require a justification comment for every exception.
+> **Q101 [L6] Why do type errors get "fixed" with `any` and casts?**
+> A: It is the fastest path to green.
+> Fix: Enforce `@typescript-eslint/no-explicit-any`, `no-non-null-assertion` and `ban-ts-comment` in lint. Require a justification comment for every exception.
 
 **Q102 [L4] Why do API contracts drift between web, mobile and backend?**
 A: Types are hand-written in each place.

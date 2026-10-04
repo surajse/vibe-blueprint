@@ -1,4 +1,5 @@
 # U — Upgrade vibe-blueprint to v1.0 (run in Cursor, Agent mode)
+
 > **Phase-0 pre-verdict (maintainer, 2026-10-04):** D1–D15 were re-verified against the
 > live repo before this prompt was filed. **Already fixed / not reproducible:** D1
 > (BLUEPRINT.md is 601 lines, not 1,331), D2 (de-embedded in v0.3), D3 (tense fixed),
@@ -12,19 +13,19 @@
 
 ## Before you paste (5 minutes, by hand)
 
-1. Copy `QA-051-150.md` into your repo at `docs/qa/QA-051-150.md` and commit it.
+1. Q101–Q150 are already merged into `docs/QA.md` (Part E) — nothing to copy.
 2. In GitHub: Settings → Branches → protect `main` (PR + CI required).
-3. Open the repo in Cursor → new chat → Agent mode → attach `@AGENTS.md @docs/PROGRESS.md @docs/qa/QA-051-150.md`.
+3. Open the repo in Cursor → new chat → Agent mode → attach `@AGENTS.md @docs/PROGRESS.md @docs/QA.md`.
 4. Paste the prompt below. Run ONE phase per chat. After each phase: review the diff → merge the PR → start a new chat → paste the same prompt and say `Resume at Phase N`.
 
 ## Honest positioning vs GSD (Open GSD / `gsd-core`)
 
-| Axis | GSD Core today | vibe-blueprint today | Where v1.0 can win |
-| --- | --- | --- | --- |
-| Install | `npx @opengsd/gsd-core@latest`, installs commands/skills into many agent runtimes | Copy files by hand | Zero-install files **plus** a tiny zero-dependency CLI |
-| State | `.planning/` directory | `docs/PROGRESS.md` (manual) | `.vibe/` state + verification receipts |
-| Reach | Active community, many runtimes | New, 0 stars | Cannot be claimed — must be earned with evals and adoption |
-| Focus | General spec-driven build loop | Reliability + production | Play Store / web launch gates, security, 150-question failure KB, stack profiles |
+| Axis    | GSD Core today                                                                    | vibe-blueprint today        | Where v1.0 can win                                                               |
+| ------- | --------------------------------------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------- |
+| Install | `npx @opengsd/gsd-core@latest`, installs commands/skills into many agent runtimes | Copy files by hand          | Zero-install files **plus** a tiny zero-dependency CLI                           |
+| State   | `.planning/` directory                                                            | `docs/PROGRESS.md` (manual) | `.vibe/` state + verification receipts                                           |
+| Reach   | Active community, many runtimes                                                   | New, 0 stars                | Cannot be claimed — must be earned with evals and adoption                       |
+| Focus   | General spec-driven build loop                                                    | Reliability + production    | Play Store / web launch gates, security, 150-question failure KB, stack profiles |
 
 Do not copy GSD code or prose. Win on: production gates, a 150-question failure knowledge base, machine-checkable "done", stack profiles, and published evals.
 
@@ -54,8 +55,8 @@ G4  Before AND after every phase run `pnpm verify` and paste the REAL output.
     The repo must be green at the end of every phase.
 G5  No new dependency unless the phase says so. State name, why, size, and `npm view`
     output. Prefer Node built-ins (node:test, node:util parseArgs, node:fs, node:crypto).
-G6  Copy attached content (QA-051-150.md) verbatim. Only fix formatting. Never "improve"
-    its wording unless told to.
+G6  Q101–Q150 already live in docs/QA.md (Part E). Do not re-create them; only fix formatting
+    if needed. Never "improve" their wording unless told to.
 G7  Do not delete content that has no replacement yet. Move, then link.
 G8  After 2 failed attempts at anything: stop, report evidence and 2 hypotheses.
 G9  At the end of each phase: update docs/PROGRESS.md, add "Gotchas learned", and give me
@@ -95,7 +96,7 @@ AGENTS.md                       canonical, <=150 lines, <=~2k tokens
 docs/
   BLUEPRINT.md                  index only, <=150 lines, links to everything below
   playbook/                     why-ai-fails, 7-layers, daily-loop, golden-rules, faq
-  qa/                           01-psychology Q1-25, 02-technical Q26-50, QA-051-150 (given)
+  qa/                           01-psychology Q1-25, 02-technical Q26-50 (Q101–Q150 already in docs/QA.md)
   hi/                           original Hinglish text preserved (optional translation home)
   FRESHNESS.md                  claim | source URL | checked on | re-check by
   AGENT_SECURITY.md  TOOLING.md  STACK_SELECTION.md  METRICS.md
@@ -151,7 +152,7 @@ PHASE 3 — 150-question knowledge base (D7, D8)
 - Translate Q1–Q50 from Hinglish into clear English into docs/qa/01-psychology.md (Q1–25)
   and docs/qa/02-technical.md (Q26–50), same Q/A/Fix format, add [L1–L7] layer tags.
   Preserve the original Hinglish in docs/hi/ (move, do not delete).
-- Keep docs/qa/QA-051-150.md verbatim (G6).
+- Q101–Q150 already live in docs/QA.md Part E (G6); split into docs/qa/ files per the target structure.
 - Create docs/qa/INDEX.md: table Q# | topic | layer | file. Create a "Top 20" page
   linking the highest-impact Qs.
 - scripts/check-qa.mjs: assert Q1..Q150 present exactly once, in order, each with A: and Fix:
