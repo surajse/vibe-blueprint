@@ -2,7 +2,7 @@
 
 ### Zero-Drift Vibe Coding Kit
 
-50 Q&A debate → fixes → open-source GitHub repo → Cursor prompts → full stack + architecture + PRD
+100 Q&A debate → fixes → open-source GitHub repo → Cursor prompts → full stack + architecture + PRD
 
 > **Language note:** Explanation Hinglish me hai. Prompts, rules aur code English me hain, kyunki AI ko English instructions zyada reliable milte hain.
 
@@ -12,7 +12,7 @@
 
 0. Sach pehle (honest truth)
 1. Quick start (10 min)
-2. The 50-question debate (psychological + logical)
+2. The 100-question debate (psychological + logical)
 3. The fix: 7-layer anti-hallucination system
 4. GitHub repo design (`vibe-blueprint`) + exact file contents
 5. Master Bootstrap Prompt (Cursor builds the repo)
@@ -51,227 +51,27 @@ Hallucination ↓  =  Grounding ↑  +  Task size ↓  +  Verification ↑  +  M
 
 ---
 
-## 2. The 50-question debate
+## 2. The 100-question debate
 
-Format: **Q** (sawaal) → **A** (root cause) → **Fix** (kya karna hai).
+Why AI-assisted coding drifts — and what to do about it — lives in
+[`docs/QA.md`](docs/QA.md): 100 questions in Q → A (root cause) → Fix format,
+split into psychological (Q1–Q25, Q51–Q75) and logical/technical (Q26–Q50, Q76–Q100).
 
-### Part A: Psychological (insaan wali galtiyan), Q1–Q25
-
-**Q1. AI confident bolta hai to hum bina check kiye kyun maan lete hain?**
-A: _Automation bias_ + _fluency heuristic_: smooth likha text sach jaisa lagta hai.
-Fix: "Trust nothing, run everything." Har claim ke saath command output ya test result maango.
-
-**Q2. "Uber jaisa app bana do" jaise vague prompt kyun fail hote hain?**
-A: Ambiguity me AI gaps ko guess se bharta hai. Yahi _specification-level hallucination_ hai.
-Fix: PRD + acceptance criteria (Given/When/Then) likho, phir code maango.
-
-**Q3. Hum ek hi prompt me poora app kyun maangte hain?**
-A: _Planning fallacy_ + "magic wand" soch.
-Fix: Vertical slices. Ek prompt = ek chhota feature, max ~5 files.
-
-**Q4. Hum AI ka code padhte kyun nahi?**
-A: _Cognitive offloading_: "chal raha hai, bas."
-Fix: Review checklist (Section 7-V) + AI se "explain the diff" + CI gates.
-
-**Q5. Demo chal gaya to production-ready kyun lagta hai?**
-A: _Happy-path bias_ / survivorship bias.
-Fix: Definition of Done me error, empty, loading, offline, auth-expired states aur tests shaamil karo.
-
-**Q6. Same bug ke fix ka loop kyun chalta rehta hai?**
-A: _Sunk-cost fallacy_ + AI ke paas root-cause evidence nahi hota.
-Fix: 2 failed attempts ke baad `git reset`, naya chat, logs + repro + root-cause hypothesis ke saath.
-
-**Q7. Hum khud bhool jaate hain, phir AI se yaad rakhne ki umeed kyun?**
-A: _Anthropomorphism / ELIZA effect_: AI ko insaan jaisa samajhna.
-Fix: Yaad rakhne wali har cheez `AGENTS.md` aur `docs/` me likho.
-
-**Q8. "Maine pehle bataya tha" lekin AI ko yaad nahi, kyun?**
-A: Naya chat = naya session. Pichli baatein model ke paas hain hi nahi.
-Fix: Docs hi memory hain. Har session `@AGENTS.md @docs/PROGRESS.md` se shuru karo.
-
-**Q9. Requirements baar baar badalne se AI confuse kyun hota hai?**
-A: Scope creep: purani aur nayi instructions context me conflict karti hain.
-Fix: Change request → pehle PRD update → phir task → phir code.
-
-**Q10. AI har baat pe "haan" kyun bolta hai?**
-A: _Sycophancy_: training me user ko khush rakhna reward hota hai.
-Fix: Prompt: "Challenge my plan. List 5 ways it fails. Disagree if I'm wrong."
-
-**Q11. Pehla solution mil gaya to usi pe atak kyun jaate hain?**
-A: _Anchoring bias_.
-Fix: Hamesha 2–3 options + trade-offs maango, phir decision ko ADR me likho.
-
-**Q12. Hum sirf wahi output dekhte hain jo humari soch ko sahi thehraye?**
-A: _Confirmation bias_.
-Fix: Adversarial prompt: "Try to break this feature. List edge cases and write failing tests."
-
-**Q13. Beginner ko galtiyan dikhti hi nahi, kyun?**
-A: _Dunning-Kruger_: pata hi nahi kya nahi pata.
-Fix: Objective reviewers lagao: linter, typecheck, tests, CodeQL, aur ek second AI reviewer.
-
-**Q14. Cursor, Lovable, Bolt, v0 sab mix karne se kya hota hai?**
-A: Context fragmentation: har tool ke paas alag adhoora version hota hai.
-Fix: **GitHub repo = single source of truth.** Platforms sirf uske consumer hain.
-
-**Q15. Security "baad me dekhenge", yeh galat kyun?**
-A: _Optimism bias_. AI default me insecure patterns (open DB, secrets in client) likh deta hai.
-Fix: `060-security.mdc` always-on, RLS by default, gitleaks + CodeQL CI me.
-
-**Q16. Jaldi ke chakkar me review skip karna kitna risky hai?**
-A: _Hurry bias_: bugs baad me 10x mehenge padte hain.
-Fix: Gates non-negotiable: `pnpm verify` fail = merge nahi.
-
-**Q17. 3 din ek hi chat chalana kyun nuksaan karta hai?**
-A: Chat lamba hone se context dilute, summarize ya truncate hota hai.
-Fix: **1 task = 1 chat.** Task khatam → PROGRESS.md update → chat band.
-
-**Q18. "AI sab jaanta hai" (AGI myth) kyun galat hai?**
-A: Use aapka private repo, aapka DB schema, aur kal ki library updates nahi pata.
-Fix: Grounding do: apne docs, types, library docs, aur actual files.
-
-**Q19. Error copy karke "fix it" likhna kyun kaam nahi karta?**
-A: Symptom patch hota hai, root cause nahi.
-Fix: Expected vs actual, repro steps, logs, relevant files do, aur pehle "root cause batao, code mat likho".
-
-**Q20. Naming aur conventions define na karne se kya hota hai?**
-A: Har generation me alag style, isliye codebase inconsistent ho jata hai.
-Fix: Conventions rules me likho aur ESLint/Prettier se enforce karo.
-
-**Q21. Humne AI ko "kya NAHI karna" kyun nahi bataya?**
-A: Default AI helpful banne ke liye extra refactor aur dependencies add karta hai.
-Fix: Explicit DO-NOT list: no new deps, no refactor, no renames, no test edits.
-
-**Q22. "Done" ka matlab humare aur AI ke liye alag kyun hai?**
-A: Success criteria nahi diye.
-Fix: Har task me acceptance criteria + verify commands.
-
-**Q23. "You are the world's best engineer" role-prompt kaam karta hai?**
-A: Role se style badalta hai, knowledge nahi badhta.
-Fix: Role ki jagah grounding, tests aur constraints do.
-
-**Q24. Commit na karne se kya risk hai?**
-A: Ek bad agent edit se sab bigad sakta hai, aur wapas jaane ka raasta nahi.
-Fix: Branch per task, commit after every green step.
-
-**Q25. Non-technical person verify kaise kare?**
-A: Code padhna zaroori nahi, behavior verify karna zaroori hai.
-Fix: E2E tests, preview deploy, click-through checklist, Sentry alerts, aur ek second AI "code reviewer".
-
-### Part B: Logical / Technical (model aur tooling), Q26–Q50
-
-**Q26. Hallucination actually hai kya?**
-A: LLM next-token predictor hai. Uske paas built-in truth database ya "I don't know" button nahi.
-Fix: Grounding (real files, docs, types) + permission: "Agar pata nahi to bolo, guess mat karo."
-
-**Q27. Context window kya hai aur AI bhoolta kyun hai?**
-A: Model ek baar me limited tokens dekh sakta hai. Zyada ho to purana hissa kat jata ya summarize hota hai.
-Fix: Chhote tasks, naye chats, important cheezein files me.
-
-**Q28. "Lost in the middle" kya hai?**
-A: Bahut lambe context me beech wali jankari kamzor padti hai.
-Fix: Critical rules context ke start (AGENTS.md) me, aur context chhota rakho.
-
-**Q29. Window ke andar bhi quality kyun girti hai?**
-A: _Context rot_: tokens badhne se attention bikhar jata hai, noise badhta hai.
-Fix: Curate karo, dump mat karo. Sirf relevant files `@mention` karo.
-
-**Q30. Auto-summarize/compaction se kya khota hai?**
-A: Specific details (exact names, edge cases, "yeh mat karna") summary me ghis jaate hain.
-Fix: Compaction se pehle decisions `PROGRESS.md` aur ADR me likh do.
-
-**Q31. Har chat blank kyun hota hai?**
-A: LLM stateless hai. Persistent memory sirf tool ki feature ya aapki files se aati hai.
-Fix: `AGENTS.md` + `docs/PROGRESS.md` + `docs/ARCHITECTURE.md` har session ki entry fee hai.
-
-**Q32. Rules likhe, phir bhi AI follow nahi karta. Kyun?**
-A: Common reasons: file `.cursor/rules/` me `.md` hai (sirf `.mdc` recognized), frontmatter galat, `globs` match nahi, ya rule bahut lamba hai.
-Fix: `.mdc` + `description/globs/alwaysApply`, rules 500 lines se kam, aur Cursor Settings → Rules me verify karo.
-
-**Q33. AI purani/deprecated API kyun likhta hai?**
-A: Training cutoff. Library naye version me change ho chuki hoti hai.
-Fix: Versions pin karo, official docs `@Docs`/docs-MCP se do, typecheck chalao.
-
-**Q34. Non-existent npm/pip package kyun suggest karta hai?**
-A: Naam plausible lagta hai to generate ho jata hai. Attackers aise naam register kar sakte hain (_slopsquatting_).
-Fix: "No new dependency without approval", `npm view <pkg>` se verify, lockfile + Dependabot.
-
-**Q35. Function signature ya field names kyun invent karta hai?**
-A: Jo cheez context me nahi, woh pattern se guess hoti hai.
-Fix: DB types generate karo (`supabase gen types`), shared Zod schemas, aur "source file padho phir use karo".
-
-**Q36. AI poora codebase kyun nahi "dekhta"?**
-A: Agent retrieval/indexing se kuch snippets padhta hai. Isliye wo duplicate functions bana deta hai.
-Fix: `ARCHITECTURE.md` me map, "search before create" rule, aur exact files `@mention`.
-
-**Q37. Index stale ya files ignored hon to?**
-A: `.gitignore`/`.cursorignore` wali files nahi dikhti, naye changes ka index lag sakta hai.
-Fix: Re-index, important file explicitly attach, aur `.cursorignore` sirf secrets/build output ke liye.
-
-**Q38. Rules aur chat instructions conflict karein to?**
-A: Cursor me precedence: Team Rules > Project Rules > User Rules. Chat instruction alag layer hai aur contradiction se output random hota hai.
-Fix: Ek source of truth, short rules, koi contradiction nahi.
-
-**Q39. Bahut saare rules daalne se kya hota hai?**
-A: Instruction overload: AI kuch rules ignore kar deta hai.
-Fix: Always-on rules sirf 10–12 aur combined ~2000 tokens ke andar, baaki `globs` se scoped.
-
-**Q40. Agent unrequested refactor kyun karta hai?**
-A: Helpful dikhne ki tendency + broad prompt.
-Fix: Scope fence: "Touch only: [files]. Forbidden: [files]." + diff review.
-
-**Q41. "Done" bolta hai par run nahi kiya. Kyun?**
-A: Text generate karna aasan hai, verify karna tool-call maangta hai.
-Fix: Rule: "Done = `pnpm verify` ka actual output paste karo."
-
-**Q42. Mock data, TODO aur fake function kyun chhod deta hai?**
-A: Chhota rasta, aur demo jaisa dikhne wala code reward-sa lagta hai.
-Fix: "No stubs/mocks in production paths" + e2e tests real local DB pe.
-
-**Q43. Same prompt, alag output kyun?**
-A: Sampling randomness.
-Fix: Output ko prompt se nahi, **tests** se lock karo. Tests hi deterministic spec hain.
-
-**Q44. IDs, env var names, long strings galat kyun copy hoti hain?**
-A: Tokenization aur approximate reproduction.
-Fix: Constants, Zod env schema (`env.ts`), codegen. Strings ko hand-type mat karao.
-
-**Q45. Architecture drift kyun hota hai?**
-A: Har prompt alag pattern laata hai, aur 20 prompts me spaghetti ban jata hai.
-Fix: Layered architecture + ADR + ESLint import boundaries.
-
-**Q46. AI tests ko change karke pass kyun kar deta hai?**
-A: Goal "green" dikhna ban jata hai, "correct" nahi.
-Fix: Rule: "Never edit tests to pass unless spec changed." Tests pehle commit, test diffs pe human review.
-
-**Q47. Security hallucinations (RLS missing, secrets client me)?**
-A: Training data me insecure examples bahut hain.
-Fix: Security rules always-on, RLS default, gitleaks, CodeQL, `SECURITY.md` checklist.
-
-**Q48. Parallel agents ek hi file todein to?**
-A: Concurrent edits, last-write-wins conflicts.
-Fix: Git worktree/branch per task, ek file area ka ek owner, PR se merge.
-
-**Q49. Mobile (Android) me hallucination zyada kyun lagti hai?**
-A: Native modules, SDK version mismatch, permissions, aur build errors AI ko nahi dikhte.
-Fix: Expo managed workflow, `npx expo install <pkg>` (compatible versions), EAS build CI me, Maestro e2e, emulator logs paste karo.
-
-**Q50. Kya ek system se hallucination bilkul khatam ho jayega?**
-A: Nahi. Yeh probabilistic system hai.
-Fix: **Defense in depth:** Spec → Rules → Small tasks → Gates → Review → Monitoring → Rollback. Har layer baaki layers ki galtiyan pakadti hai.
-
----
+The short version: LLMs are probabilistic next-token predictors with no built-in
+"I don't know" button (Q26). Hallucination drops when grounding goes up, task size
+goes down, verification goes up, and memory lives in files (Q100).
 
 ## 3. The fix: 7-layer anti-hallucination system
 
-| Layer           | Kya                              | Konsi files / tools                      | Q#                 |
-| --------------- | -------------------------------- | ---------------------------------------- | ------------------ |
-| L1 Spec         | Kya banana hai, testable form me | `docs/PRD.md`, acceptance criteria       | 2, 9, 22           |
-| L2 Memory       | Context files me, chat me nahi   | `AGENTS.md`, `docs/PROGRESS.md`, ADRs    | 7, 8, 30, 31       |
-| L3 Rules        | Behaviour ke guardrails          | `.cursor/rules/*.mdc`                    | 20, 21, 32, 38, 39 |
-| L4 Grounding    | Real source dena                 | Docs, generated types, Zod, MCP          | 26, 33, 35, 36     |
-| L5 Task slicing | Chhote, bounded kaam             | `docs/TASKS.md`, 1 task = 1 chat         | 3, 17, 29, 40      |
-| L6 Gates        | Machine verification             | `pnpm verify`, CI, e2e, CodeQL, gitleaks | 4, 5, 41, 46, 47   |
-| L7 Review & Ops | Insaan + monitoring              | PR template, Sentry, preview deploys     | 13, 25, 50         |
+| Layer           | Kya                              | Konsi files / tools                      | Q#                                                               |
+| --------------- | -------------------------------- | ---------------------------------------- | ---------------------------------------------------------------- |
+| L1 Spec         | Kya banana hai, testable form me | `docs/PRD.md`, acceptance criteria       | 2, 9, 22, 54, 57, 58, 63, 70, 91, 92                             |
+| L2 Memory       | Context files me, chat me nahi   | `AGENTS.md`, `docs/PROGRESS.md`, ADRs    | 7, 8, 30, 31, 65, 99                                             |
+| L3 Rules        | Behaviour ke guardrails          | `.cursor/rules/*.mdc`                    | 20, 21, 32, 38, 39, 51, 52, 55, 64, 75, 76, 77, 84, 85, 86       |
+| L4 Grounding    | Real source dena                 | Docs, generated types, Zod, MCP          | 26, 33, 35, 36, 59, 79, 82, 88, 90, 95                           |
+| L5 Task slicing | Chhote, bounded kaam             | `docs/TASKS.md`, 1 task = 1 chat         | 3, 17, 29, 40, 53, 60, 67                                        |
+| L6 Gates        | Machine verification             | `pnpm verify`, CI, e2e, CodeQL, gitleaks | 4, 5, 41, 46, 47, 61, 69, 71, 78, 80, 81, 83, 87, 89, 94, 96, 97 |
+| L7 Review & Ops | Insaan + monitoring              | PR template, Sentry, preview deploys     | 13, 25, 50, 56, 62, 66, 68, 72, 73, 74, 93, 98, 100              |
 
 ### Daily loop (har feature ke liye)
 

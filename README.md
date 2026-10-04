@@ -7,7 +7,7 @@
 keeps context in files (not chat), enforces strict rules, slices work into small
 tasks, and verifies everything with automated gates.
 
-The full playbook — 50-question debate, 7-layer anti-hallucination system,
+The full playbook — 100-question debate, 7-layer anti-hallucination system,
 prompts, stack, architecture, PRD — lives in [`docs/BLUEPRINT.md`](docs/BLUEPRINT.md).
 
 > Tested with: Node 24.20.0, pnpm 12.9.1 — 2026-10-04. Re-verify quarterly.

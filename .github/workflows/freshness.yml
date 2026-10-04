@@ -1,0 +1,21 @@
+name: Freshness reminder
+on:
+  schedule:
+    - cron: '0 6 1 */3 *' # 1st day of every 3rd month
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Open re-verify issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "Quarterly re-verify: dated facts" \
+            --body "Re-check every row in docs/FRESHNESS.md (versions, Play policy, Cursor docs, action majors). Update the Checked column or fix the fact."
