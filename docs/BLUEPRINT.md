@@ -451,9 +451,8 @@ echo "VERIFY OK"
 ### 4.9 `.github/workflows/ci.yml`
 
 ```yaml
-# Action pins last verified 2026-10-04. ALWAYS re-verify majors at bootstrap:
-# old action runtimes get retired (e.g. github/codeql-action v3 was removed Dec 2026,
-# actions/* v4 still ran on the retired Node 20 runtime).
+# Action pins last verified 2026-10-04. Dated facts (including these pins) live in
+# docs/FRESHNESS.md — re-verify majors quarterly, never trust a comment's date.
 name: CI
 on:
   pull_request:
@@ -553,7 +552,8 @@ PHASE A — Root config
 Create: package.json (scripts as in Section 4.8), pnpm-workspace.yaml (apps/*,
 packages/*), turbo.json (tasks: build, lint, typecheck, test, dev), tsconfig.base.json
 (strict: true, noUncheckedIndexedAccess: true), .prettierrc, .editorconfig, .gitignore,
-.nvmrc (exact Node version, e.g. 24.20.0 — never "lts/*"; record the pin date. Node 24 was active LTS until 2026-10-20, Node 26 became LTS 2026-10-28; re-verify quarterly), eslint config, .cursorignore.
+.nvmrc: exact Node version (never "lts/*"). Which line to pick and when is tracked
+in docs/FRESHNESS.md. Verify with `node -v` before committing., eslint config, .cursorignore.
 Verify: `pnpm install` succeeds.
 
 PHASE B — Walking skeleton

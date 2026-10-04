@@ -14,6 +14,7 @@ Future event = future tense. Har row quarterly re-verify karo
 | gitleaks-action requires `GITLEAKS_LICENSE` for organization-owned repos (personal repos: no license needed)       | gitleaks-action README                                 | 2026-10-04 |
 | pnpm 12.9.1 is npm `latest`                                                                                        | `npm view pnpm version`                                | 2026-10-04 |
 | Node 24.21.0 is the latest LTS                                                                                     | nodejs.org release index                               | 2026-10-04 |
+| Template pins Node 24.21.0 in `.nvmrc`                                                                             | `.nvmrc`                                               | 2026-10-04 |
 | Play: new apps and updates must target API 36 from 2026-08-31                                                      | Play Console Help: Target API level requirements       | 2026-10-04 |
 | Play: personal accounts created after 2023-11-13 need a closed test with 12 testers for 14 days                    | Play Console Help                                      | 2026-10-04 |
 | Cursor: project rules are `.mdc` only; precedence Team > Project > User                                            | Cursor docs                                            | 2026-10-04 |
