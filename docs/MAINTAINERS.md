@@ -59,7 +59,7 @@ AGENTS.md and .cursor/rules/*.mdc (000-core, 010-security, 020-web-nextjs,
 (`mcp.json.example`, placeholders only, no real keys) in `.cursor/`. Verify: list files, valid frontmatter.
 
 PHASE D — Docs
-docs/: BLUEPRINT.md (playbook, links not embeds), QA.md (100-question debate),
+docs/: BLUEPRINT.md (playbook, links not embeds), QA.md (150-question debate),
 FRESHNESS.md, PRD.md, ARCHITECTURE.md, TECH_STACK.md, DATA_MODEL.md, API_CONTRACT.md,
 DESIGN_SYSTEM.md, SECURITY.md, TESTING.md, PROGRESS.md, TASKS.md, BACKLOG.md,
 GLOSSARY.md, UX.md, DATA_INVENTORY.md, ENVIRONMENTS.md, RELEASE.md, RUNBOOK.md,
