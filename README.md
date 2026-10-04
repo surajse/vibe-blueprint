@@ -47,6 +47,8 @@ flowchart LR
     LOOP --> P7[Hardening] --> P8[Deploy] --> P9[Release] --> P10[Play Store]
 ```
 
+![From idea to Play Store — P0 to P10, one phase per chat](docs/assets/mockup-journey.svg)
+
 **Daily loop (every feature):**
 
 1. Pick the next task from `docs/TASKS.md`
@@ -89,6 +91,8 @@ vibe-blueprint/
 ```
 
 ## The 7 layers
+
+![7-layer anti-hallucination system](docs/assets/mockup-7-layers.svg)
 
 | Layer           | What                                 | Files                                    |
 | --------------- | ------------------------------------ | ---------------------------------------- |

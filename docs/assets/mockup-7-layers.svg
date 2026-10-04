@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1020" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#141433"/>
+      <stop offset="1" stop-color="#0b0b20"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1020" fill="url(#bg)" rx="24"/>
+  <text x="400" y="58" text-anchor="middle" fill="#ffffff" font-size="30" font-weight="700">7-layer anti-hallucination system</text>
+  <text x="400" y="86" text-anchor="middle" fill="#9ca3af" font-size="15">Every layer catches what the previous layer missed</text>
+
+  <g font-size="15">
+    <!-- L1 -->
+    <rect x="40" y="110" width="720" height="112" rx="14" fill="#ffffff" fill-opacity="0.04"/>
+    <rect x="40" y="110" width="8" height="112" rx="4" fill="#6366f1"/>
+    <circle cx="92" cy="166" r="26" fill="#6366f1"/>
+    <text x="92" y="174" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">1</text>
+    <text x="136" y="156" fill="#fff" font-size="19" font-weight="600">Spec</text>
+    <text x="136" y="180" fill="#9ca3af">Testable definition of what to build</text>
+    <text x="136" y="202" fill="#6b7280" font-size="13" font-family="ui-monospace, monospace">docs/PRD.md, acceptance criteria</text>
+
+    <!-- L2 -->
+    <rect x="40" y="234" width="720" height="112" rx="14" fill="#ffffff" fill-opacity="0.04"/>
+    <rect x="40" y="234" width="8" height="112" rx="4" fill="#8b5cf6"/>
+    <circle cx="92" cy="290" r="26" fill="#8b5cf6"/>
+    <text x="92" y="298" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">2</text>
+    <text x="136" y="280" fill="#fff" font-size="19" font-weight="600">Memory</text>
+    <text x="136" y="304" fill="#9ca3af">Context lives in files, not in chat</text>
+    <text x="136" y="326" fill="#6b7280" font-size="13" font-family="ui-monospace, monospace">AGENTS.md, docs/PROGRESS.md, ADRs</text>
+
+    <!-- L3 -->
+    <rect x="40" y="358" width="720" height="112" rx="14" fill="#ffffff" fill-opacity="0.04"/>
+    <rect x="40" y="358" width="8" height="112" rx="4" fill="#a855f7"/>
+    <circle cx="92" cy="414" r="26" fill="#a855f7"/>
+    <text x="92" y="422" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">3</text>
+    <text x="136" y="404" fill="#fff" font-size="19" font-weight="600">Rules</text>
+    <text x="136" y="428" fill="#9ca3af">Behaviour guardrails for the AI</text>
+    <text x="136" y="450" fill="#6b7280" font-size="13" font-family="ui-monospace, monospace">.cursor/rules/*.mdc</text>
+
+    <!-- L4 -->
+    <rect x="40" y="482" width="720" height="112" rx="14" fill="#ffffff" fill-opacity="0.04"/>
+    <rect x="40" y="482" width="8" height="112" rx="4" fill="#06b6d4"/>
+    <circle cx="92" cy="538" r="26" fill="#06b6d4"/>
+    <text x="92" y="546" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">4</text>
+    <text x="136" y="528" fill="#fff" font-size="19" font-weight="600">Grounding</text>
+    <text x="136" y="552" fill="#9ca3af">Real sources, never guesses</text>
+    <text x="136" y="574" fill="#6b7280" font-size="13" font-family="ui-monospace, monospace">docs, generated types, Zod, MCP</text>
+
+    <!-- L5 -->
+    <rect x="40" y="606" width="720" height="112" rx="14" fill="#ffffff" fill-opacity="0.04"/>
+    <rect x="40" y="606" width="8" height="112" rx="4" fill="#10b981"/>
+    <circle cx="92" cy="662" r="26" fill="#10b981"/>
+    <text x="92" y="670" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">5</text>
+    <text x="136" y="652" fill="#fff" font-size="19" font-weight="600">Task slicing</text>
+    <text x="136" y="676" fill="#9ca3af">Small, bounded work units</text>
+    <text x="136" y="698" fill="#6b7280" font-size="13" font-family="ui-monospace, monospace">docs/TASKS.md — 1 task = 1 chat = 1 PR</text>
+
+    <!-- L6 -->
+    <rect x="40" y="730" width="720" height="112" rx="14" fill="#ffffff" fill-opacity="0.04"/>
+    <rect x="40" y="730" width="8" height="112" rx="4" fill="#f59e0b"/>
+    <circle cx="92" cy="786" r="26" fill="#f59e0b"/>
+    <text x="92" y="794" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">6</text>
+    <text x="136" y="776" fill="#fff" font-size="19" font-weight="600">Gates</text>
+    <text x="136" y="800" fill="#9ca3af">Machine verification, no exceptions</text>
+    <text x="136" y="822" fill="#6b7280" font-size="13" font-family="ui-monospace, monospace">pnpm verify, CI, e2e, CodeQL, gitleaks</text>
+
+    <!-- L7 -->
+    <rect x="40" y="854" width="720" height="112" rx="14" fill="#ffffff" fill-opacity="0.04"/>
+    <rect x="40" y="854" width="8" height="112" rx="4" fill="#f43f5e"/>
+    <circle cx="92" cy="910" r="26" fill="#f43f5e"/>
+    <text x="92" y="918" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">7</text>
+    <text x="136" y="900" fill="#fff" font-size="19" font-weight="600">Review &amp; Ops</text>
+    <text x="136" y="924" fill="#9ca3af">Humans + monitoring in production</text>
+    <text x="136" y="946" fill="#6b7280" font-size="13" font-family="ui-monospace, monospace">PR review, Sentry, staged rollouts</text>
+  </g>
+  <text x="400" y="1000" text-anchor="middle" fill="#4b5563" font-size="13">vibe-blueprint — hallucination ↓ = grounding ↑ + task size ↓ + verification ↑ + memory in files</text>
+</svg>
