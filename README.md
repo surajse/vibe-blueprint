@@ -10,7 +10,7 @@ the way to Play Store launch. It keeps context in files (not chat), enforces
 strict anti-hallucination rules, slices work into small tasks, and verifies
 everything with automated gates.
 
-The full playbook — 100-question debate, 7-layer anti-hallucination system,
+The full playbook — 150-question debate, 7-layer anti-hallucination system,
 prompts, stack, architecture, PRD — lives in [`docs/BLUEPRINT.md`](docs/BLUEPRINT.md).
 
 > Tested with: Node 24.21.0, pnpm 12.9.1 — 2026-10-04. Re-verify quarterly.
@@ -71,7 +71,7 @@ vibe-blueprint/
 ├── docs/
 │   ├── BLUEPRINT.md          # the full playbook (links to real files, never embeds them)
 │   ├── MAINTAINERS.md        # template maintainers: repo-building prompt
-│   ├── QA.md                 # 100-question debate on AI drift
+│   ├── QA.md                 # 150-question debate on AI drift
 │   ├── FRESHNESS.md          # dated facts: fact | source | checked date
 │   ├── PRD.md / ARCHITECTURE.md / TECH_STACK.md
 │   ├── ENVIRONMENTS.md / RELEASE.md / RUNBOOK.md / OBSERVABILITY.md

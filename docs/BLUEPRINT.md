@@ -12,7 +12,7 @@
 
 0. Sach pehle (honest truth)
 1. Quick start (10 min)
-2. The 100-question debate (psychological + logical)
+2. The 150-question debate (psychological + logical)
 3. The fix: 7-layer anti-hallucination system
 4. GitHub repo design (`vibe-blueprint`)
 5. Master Bootstrap Prompt (maintainers only → docs/MAINTAINERS.md)
@@ -60,7 +60,7 @@ Hallucination ↓  =  Grounding ↑  +  Task size ↓  +  Verification ↑  +  M
 
 ---
 
-## 2. The 100-question debate
+## 2. The 150-question debate
 
 Why AI-assisted coding drifts — and what to do about it — lives in
 [`docs/QA.md`](docs/QA.md): 100 questions in Q → A (root cause) → Fix format,
@@ -142,7 +142,7 @@ vibe-blueprint/
 ├── docs/
 │   ├── BLUEPRINT.md              # yeh file — playbook (links, not embeds)
 │   ├── MAINTAINERS.md            # template maintainers ke liye
-│   ├── QA.md                     # 100-question debate
+│   ├── QA.md                     # 150-question debate
 │   ├── FRESHNESS.md              # dated facts: fact | source | checked
 │   ├── PRD.md  ARCHITECTURE.md  TECH_STACK.md
 │   ├── DATA_MODEL.md  API_CONTRACT.md  DESIGN_SYSTEM.md

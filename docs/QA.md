@@ -1,4 +1,4 @@
-# The 100-question debate
+# The 150-question debate
 
 Why AI-assisted coding drifts, and what to do about it.
 
@@ -414,3 +414,225 @@ Fix: `docs/FRESHNESS.md` (fact | source | verified date), quarterly reminder wor
 **Q100. Kaise jaanein ki system sach me hallucination kam kar raha hai?**
 A: Feeling se nahi, measurement se. "Lagta hai kaam kar raha hai" bhi ek bias hai (Q1).
 Fix: `PROGRESS.md` me weekly metrics: first-pass `pnpm verify` rate, Gotchas learned per task, revert/reopen rate, UNVERIFIED items (Prompt H), prod bugs vs CI-caught bugs. Target: same Gotcha repeat = 0. Dogfood: build one real example app P0→P10 with this template and record every prompt failure as an issue — prompts ki asli kamiyan tabhi milengi.
+
+## Part E: Production depth (Q101–Q150)
+
+> Q101–Q150 are in English (Q1–Q100 above are Hinglish). Each carries an **[L1–L7]**
+> tag for the 7-layer system that owns the fix. **🔎** = tied to a tool, platform or
+> policy that changes often — re-verify quarterly (`docs/FRESHNESS.md`).
+> Q96–Q100 of the original set are covered in Part D above.
+**Q101 [L6] Why do type errors get "fixed" with `any` and casts?**
+A: It is the fastest path to green.
+Fix: Enforce `@typescript-eslint/no-explicit-any`, `no-non-null-assertion` and `ban-ts-comment` in lint. Require a justification comment for every exception.
+
+**Q102 [L4] Why do API contracts drift between web, mobile and backend?**
+A: Types are hand-written in each place.
+Fix: One Zod schema or OpenAPI file as the source, generated clients, and contract tests in CI.
+
+**Q103 [L3] Why does AI mishandle dates, time zones and money?**
+A: These are subtle domains with many wrong examples in training data.
+Fix: Rules: store UTC, use integer minor units plus currency, use a vetted date library. Test DST, leap-day and rounding cases.
+
+**Q104 [L6] Why does AI create races and double-submit bugs?**
+A: It reasons sequentially and rarely imagines concurrent requests.
+Fix: Unique constraints, transactions, idempotency keys, and tests that fire parallel requests.
+
+**Q105 [L6] Why do N+1 queries and missing indexes appear?**
+A: Clients and ORMs hide queries, and AI writes naive loops.
+Fix: Query logging in dev, `EXPLAIN` on hot queries, an "index every foreign key" rule, and a performance test on seeded data (e.g. 10k rows).
+
+**Q106 [L3] Why is error handling generic ("catch → console.log")?**
+A: Swallowing errors looks safe.
+Fix: An error taxonomy (`AppError`), `no-empty` lint, user-facing messages, and error capture (e.g. Sentry) with context.
+
+**Q107 [L3] Why do migrations get edited or become destructive?**
+A: The AI "tidies up" history or drops columns to make code simpler.
+Fix: Forward-only migrations, human review of every `DROP`/`ALTER`, backup first, and test migrations on a copy of real-shaped data.
+
+**Q108 [L4] Why does generated UI look generic and inconsistent?**
+A: With no design tokens, each component is invented from scratch.
+Fix: `DESIGN_SYSTEM.md` with tokens and a component inventory, reference screens, and screenshot-based review.
+
+**Q109 [L6] How do I test UI without reading code?**
+A: Test behaviour, not code: automated flows plus a manual acceptance click-through.
+Fix: Playwright + axe (web), Maestro (mobile), screenshot diffs for critical screens, and a click-through checklist per task.
+
+**Q110 [L6] What is a good Definition of Done for a production feature?**
+A: "Works on my screen" is not done.
+Fix: All acceptance criteria pass, tests written first, loading/empty/error/offline states, accessibility, authz and validation, performance budget, an observability event, and docs updated.
+
+---
+
+### Part G — Security, privacy & compliance (Q111–Q120)
+
+**Q111 [L3] What are the most common security mistakes in AI-generated apps?**
+A: Missing authorisation or RLS, secrets in client code, IDOR, injection, permissive CORS, unvalidated uploads, verbose errors.
+Fix: Always-on security rules, an OWASP Top 10 / ASVS-based checklist per feature, and automated scans (CodeQL, secret scan, dependency audit).
+
+**Q112 [L3] Why do AI-built apps leak API keys? 🔎**
+A: Keys end up in client bundles — especially behind public prefixes such as `NEXT_PUBLIC_` and `EXPO_PUBLIC_`, which are embedded in the shipped code.
+Fix: Treat anything with a public prefix as public. Keep secrets server-side behind your own API. Run secret scanning in CI.
+
+**Q113 [L6] What is IDOR/BOLA and why does AI create it?**
+A: An endpoint trusts an ID from the client without checking ownership.
+Fix: Derive the user from the verified session, enforce RLS or ownership checks, and test that user A cannot read or write user B's data.
+
+**Q114 [L3] Why is a database "service role" key dangerous in a client? 🔎**
+A: Such keys bypass row-level security entirely.
+Fix: Never ship them. Keep them server-only, rotate immediately if exposed, and use the anon/public key plus RLS in clients.
+
+**Q115 [L3] Where should auth tokens be stored on mobile? 🔎**
+A: Plain app storage is readable on rooted devices and in backups.
+Fix: Use platform secure storage (Android Keystore / iOS Keychain, e.g. via `expo-secure-store`). Never log tokens.
+
+**Q116 [L3] How should file uploads be handled safely?**
+A: Client-side checks are trivially bypassed.
+Fix: Validate type and size server-side, use private buckets with signed URLs, randomise file names, and scan files where risk justifies it.
+
+**Q117 [L3] What about LLM features inside my own app?**
+A: User input can steer the model (prompt injection), and unbounded usage becomes a cost attack.
+Fix: Call models only from the server, add per-user quotas and rate limits, validate inputs and outputs, allowlist tools, keep secrets out of prompts, and set budget alerts.
+
+**Q118 [L1] Why do AI-built apps break privacy rules without anyone noticing? 🔎**
+A: Data is collected by default, analytics capture PII, and consent and deletion flows are missing.
+Fix: Keep a data inventory, minimise collection, add consent, an account-deletion path and a privacy policy (Google Play expects an in-app deletion option for apps with accounts). Have a lawyer review. This is not legal advice.
+
+**Q119 [L6] How do I reduce dependency supply-chain risk? 🔎**
+A: Hallucinated or typosquatted package names and compromised releases.
+Fix: Commit the lockfile, install with `--frozen-lockfile`, use Dependabot and audit, consider a minimum release-age setting in your package manager, and require approval for every new dependency.
+
+**Q120 [L7] What if a secret leaks into git or a chat?**
+A: Assume it is compromised the moment it is pushed or pasted.
+Fix: Rotate and revoke first, only then clean history, add secret scanning, and record the incident in "Gotchas learned".
+
+---
+
+### Part H — Mobile, Android & Google Play (Q121–Q130)
+
+**Q121 [L4] Expo, native Kotlin or Flutter for an AI-built Android app? 🔎**
+A: It depends on the product. Expo gives managed builds and shares TypeScript with web; native Kotlin suits deep hardware or maximum performance; Flutter suits one pixel-perfect UI codebase.
+Fix: Default to Expo; any deviation needs an ADR stating the reason.
+
+**Q122 [L6] Why do mobile builds fail only on CI or EAS? 🔎**
+A: Environment differences: native dependency versions, Gradle/JDK, SDK mismatch.
+Fix: Run `npx expo install --check` and `npx expo-doctor`, pin versions, and build a preview on every release PR.
+
+**Q123 [L4] Why do permission flows hallucinate? 🔎**
+A: Android permissions change by OS version (e.g. runtime notification permission on Android 13+).
+Fix: Follow official docs for your target SDK, use config plugins instead of hand-editing manifests, and test on min and target API levels.
+
+**Q124 [L6] Why does an app crash on real phones but not the emulator?**
+A: Memory limits, OEM battery policies, different CPU architectures and flaky networks.
+Fix: Test on at least two real low-end devices, use a device farm, and enable crash reporting before launch.
+
+**Q125 [L7] What does Google Play require before a production release? 🔎**
+A: Requirements change often: typically a signed Android App Bundle, a target-API minimum, a privacy policy, the Data safety form, a content rating, store assets, and a closed-testing period for newer personal accounts.
+Fix: Keep `docs/PLAY_STORE.md` as a checklist and re-check Play Console's policy pages before every release.
+
+**Q126 [L7] Why do apps get rejected from Google Play? 🔎**
+A: Common causes: permission misuse, data-safety answers that don't match actual SDK behaviour, deceptive metadata, broken core flows, missing moderation for user content.
+Fix: Run the pre-launch report, audit every SDK against the Data safety form, and review the policy checklist before submitting.
+
+**Q127 [L1] How do I make offline-first reliable?**
+A: AI usually builds online-only flows and bolts caching on later.
+Fix: Decide sync and conflict rules in `ARCHITECTURE.md` (e.g. last-write-wins vs merge), queue mutations, and test with airplane mode in Maestro.
+
+**Q128 [L4] What goes wrong with push notifications? 🔎**
+A: Token lifecycle, permission timing, background limits and provider setup.
+Fix: Follow the provider's official guide, store tokens server-side, support opt-out, and test on a physical device.
+
+**Q129 [L7] How should I handle app versions and updates? 🔎**
+A: Store builds need ever-increasing version codes; JS-only fixes can sometimes ship over the air.
+Fix: Automate version numbers, define a runtime-version policy if you use OTA updates, and use staged rollouts.
+
+**Q130 [L4] How do I add in-app purchases or subscriptions? 🔎**
+A: Digital goods on Google Play generally must use Google Play Billing, and client-side receipt checks can be forged.
+Fix: Use Play Billing (or a wrapper such as RevenueCat), validate purchases server-side, and test with licence testers.
+
+---
+
+### Part I — Web production, performance & operations (Q131–Q138)
+
+**Q131 [L6] Why are AI-built sites slow?**
+A: Oversized bundles, unoptimised images, client-side request waterfalls and no caching.
+Fix: Set a performance budget, run Lighthouse CI, use framework image components, prefer server rendering, and analyse bundle size.
+
+**Q132 [L6] Why are SEO and accessibility usually missing?**
+A: They are invisible in a demo.
+Fix: Metadata, semantic HTML, sitemap and robots, social tags, and an automated accessibility scan (axe) in CI.
+
+**Q133 [L6] Why does production behave differently from local?**
+A: Configuration drift: env vars, database state, CORS, domains.
+Fix: Commit `.env.example`, validate env with Zod, keep an environment matrix in `docs/ENVIRONMENTS.md`, and run smoke tests after every deploy.
+
+**Q134 [L7] How do I deploy without downtime and roll back safely?**
+A: Destructive migrations and big-bang releases remove the way back.
+Fix: Immutable deploys, preview environments, expand-then-contract migrations, feature flags, and a rehearsed rollback.
+
+**Q135 [L7] What is the minimum monitoring for launch?**
+A: Without it you learn about outages from users.
+Fix: Error tracking, an uptime check on `/api/health`, structured logs, key business events, and alerts routed to a human.
+
+**Q136 [L7] How do I handle backups and disaster recovery?**
+A: A backup you never restored is a hope, not a backup.
+Fix: Automated backups, a documented RPO/RTO, and a restore drill before launch.
+
+**Q137 [L7] How do I prevent abuse and runaway cost?**
+A: Bots, scraping, signup abuse and unbounded paid-API calls.
+Fix: Rate limits, bot protection on signup, WAF where available, per-user quotas, and budget alerts on cloud and LLM spend.
+
+**Q138 [L7] What breaks with domains, email and TLS?**
+A: Missing DNS records send mail to spam or break verification.
+Fix: Checklist: SPF, DKIM, DMARC, HTTPS redirect, HSTS, and a test send to major mail providers.
+
+---
+
+### Part J — Team, process, cost & long-term (Q139–Q150)
+
+**Q139 [L7] How do I estimate cost and time with AI coding?**
+A: Visible cost is tokens × iterations; the hidden cost is review and rework.
+Fix: Track task cycle time and rework rate, set per-task budgets, and use stronger models for planning and review, cheaper ones for mechanical edits.
+
+**Q140 [L7] Which model for which job? 🔎**
+A: Strong reasoning models help most with planning, architecture and review; fast models suit mechanical edits. Rankings change monthly.
+Fix: Keep a model table in `docs/TOOLING.md` with a "tested with" date, and let tests, not reputation, decide.
+
+**Q141 [L2] How do I onboard a human contributor into an AI-built codebase?**
+A: Docs written as AI memory also serve humans.
+Fix: README, `ARCHITECTURE.md`, ADRs, a good-first-task list and `CONTRIBUTING.md`.
+
+**Q142 [L7] Who owns AI-generated code, and what about licences? 🔎**
+A: The law varies by country and is still evolving, and generated code can occasionally resemble licensed code.
+Fix: Run a licence scanner on dependencies, avoid pasting large unknown snippets, and consult a lawyer before commercial launch. This is not legal advice.
+
+**Q143 [L7] How do I manage technical debt created by AI?**
+A: Unmanaged, it compounds with every generated feature.
+Fix: Keep a debt register in `PROGRESS.md`, schedule refactor and deletion tasks each milestone, and track duplicate-code and complexity metrics.
+
+**Q144 [L7] How do I avoid lock-in to one AI tool?**
+A: Proprietary settings and chat history cannot be exported.
+Fix: Keep everything in plain Markdown in Git, use open conventions (`AGENTS.md`, `SKILL.md`, MCP), and keep adapters thin and generated.
+
+**Q145 [L7] How do I know this system actually works?**
+A: Without measurement it is just a belief.
+Fix: Track defect-escape rate, first-pass-verify rate, rework %, time-to-green and hallucination incidents. Run `evals/` (same tasks with and without the kit) and publish the results.
+
+**Q146 [L7] How do I stop the playbook itself going stale? 🔎**
+A: Version drift is the top killer of tool-specific guidance.
+Fix: `docs/FRESHNESS.md` with source URL and check date per claim, a script that verifies pinned versions against registries, and a CI job that fails when a "tested with" date is older than 90 days.
+
+**Q147 [L7] When should I not let AI build it alone?**
+A: Where an error is catastrophic or hard to detect: cryptography, payment core, safety-critical logic, regulated flows.
+Fix: Use vetted libraries and managed services, and require expert human review.
+
+**Q148 [L7] How do beginners learn while vibe coding?**
+A: Passive acceptance builds no skill.
+Fix: Ask "why this approach?" on each plan, keep a learning log, and read one diff a week line by line.
+
+**Q149 [L1] How do I stop AI adding features I never asked for?**
+A: Gold-plating: the model optimises for impressive, not requested.
+Fix: Non-goals in the PRD, every task traced to an FR ID, and reject any code that cannot be traced to a requirement.
+
+**Q150 [L7] What is the single highest-leverage habit?**
+A: Making wrongness cheap to detect.
+Fix: If you adopt only three things: (1) `AGENTS.md` + `PROGRESS.md` as memory, (2) one-command `pnpm verify` as the gate, (3) one task = one chat = one branch = one PR.
