@@ -29,3 +29,5 @@
 ## Gotchas learned (AI mistakes — never repeat)
 
 - <date> AI invented `<thing>`; the correct one is `<thing>`.
+- 2026-10-04 pnpm 12.0 shipped as a Rust rewrite; at release, npm's `latest` tag still
+  pointed at the pnpm 11 line — install 12 via `pnpm self-update latest-12`, verify with `pnpm -v`.

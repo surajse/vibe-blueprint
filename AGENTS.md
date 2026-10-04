@@ -2,7 +2,9 @@
 
 ## Project
 
-<APP_NAME>: <one-line description>.
+{{APP_NAME}}: {{ONE_LINE_DESCRIPTION}}.
+<!-- Placeholders use double braces: GitHub hides <LIKE_THIS> as an HTML tag in rendered markdown. -->
+
 Sources of truth: docs/PRD.md (what), docs/ARCHITECTURE.md (how),
 docs/TASKS.md (what next), docs/PROGRESS.md (current state + gotchas).
 
@@ -12,6 +14,8 @@ docs/TASKS.md (what next), docs/PROGRESS.md (current state + gotchas).
 2. Restate: the task, acceptance criteria, and the exact files you will touch.
 3. If the change touches more than 5 files, STOP and wait for my approval.
 4. Search the codebase before creating anything (existing util / component / type?).
+5. No `@file` mentions on this platform (Lovable/Bolt/ChatGPT)? Run `pnpm pack:context`
+   and paste its output at the start of the session instead.
 
 ## Hard rules
 
@@ -23,6 +27,8 @@ docs/TASKS.md (what next), docs/PROGRESS.md (current state + gotchas).
   renames or formatting changes.
 - No placeholders, TODOs, mock data or stubbed functions in production paths.
 - Never edit tests to make them pass unless the spec changed (say so explicitly).
+- Commit trailers (CI `pnpm guard` enforces these on PRs): `spec-change: <why>`
+  when a test legitimately changes; `deps-approved: <pkg>` when a dependency is approved.
 - Never read, print or commit secrets or .env* files.
 - TypeScript strict. No `any`. No `@ts-ignore` without a comment explaining why.
 - Android/Play: never change the app package name, signing keys or targetSdk downwards;

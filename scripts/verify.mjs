@@ -13,7 +13,7 @@ if (haveMajor !== wantMajor) {
   console.error(`WARN: Node ${process.versions.node}, repo expects major ${wantMajor} (.nvmrc).`);
 }
 
-const steps = ['check:docs', 'format:check', 'lint', 'typecheck', 'test', 'build'];
+const steps = ['check:docs', 'check:unicode', 'format:check', 'lint', 'typecheck', 'test', 'build'];
 
 for (const script of steps) {
   console.log(`\n> pnpm ${script}`);

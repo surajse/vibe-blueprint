@@ -221,14 +221,18 @@ context, options with trade-offs, decision, consequences. New patterns need an A
 
 ### 4.8 `scripts/verify.mjs` and root `package.json` scripts
 
-`pnpm verify` runs [`../scripts/verify.mjs`](../scripts/verify.mjs): format → lint →
-typecheck → test → build → docs-check. Cross-platform (Node, no bash needed). "Done" =
-its real output, pasted (Q41).
+`pnpm verify` runs [`../scripts/verify.mjs`](../scripts/verify.mjs): docs-check →
+unicode-check → format → lint → typecheck → test → build. Cross-platform (Node, no bash needed). "Done" =
+its real output, pasted (Q41). Three more machine gates live outside `verify`:
+`pnpm guard` (scope fence, test tampering, new deps — PRs only, enforced by the CI `guard` job),
+`pnpm check:unicode` (hidden-Unicode scan of agent instruction files),
+`pnpm pack:context` (one paste-able context bundle for platforms without `@file` mentions).
 
 ### 4.9 `.github/workflows/ci.yml`
 
 The real workflow: [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml) — verify,
-gitleaks secrets scan, CodeQL, dependency audit + review. Least-privilege permissions,
+gitleaks secrets scan, CodeQL, dependency audit + review, and the `guard` job
+(scope fence / test-tampering / new-dependency gate on PRs). Least-privilege permissions,
 concurrency, timeouts. Dated facts (action majors) live in [`docs/FRESHNESS.md`](FRESHNESS.md),
 not in comments.
 
@@ -283,7 +287,9 @@ Each prompt is a file in [`../prompts/`](../prompts/) — that file is authorita
 
 1. **Template se naya project:** GitHub → _Use this template_ → naya repo → clone → Cursor me open.
 2. **Rules check:** Cursor Settings → Rules me `000-core`, `010-security` always-on dikhne chahiye.
-3. **`AGENTS.md`** project root me hona chahiye. Cursor ise automatically padhta hai, aur `CLAUDE.md` bhi isi tarah padhta hai.
+3. **`AGENTS.md`** project root me hona chahiye. Cursor IDE ise automatically padhta hai
+   (saath me `.cursor/rules/`). `CLAUDE.md` Cursor IDE nahi padhta — use **Cursor CLI**
+   aur **Claude Code** padhte hain (wo `@AGENTS.md` import karta hai).
 4. **P0 → P5** chalao (discovery, PRD, architecture, tasks, scaffold, DB+auth). Har ek ke baad commit.
 5. **Feature loop:** `docs/TASKS.md` → next task → naya chat → **Section 7-T** prompt.
 6. **Context tools:** `@Files`, `@Folders`, `@Docs`, `@Git` use karo. (Cursor UI jaldi badalta hai, naam thoda alag ho sakta hai.) Docs-MCP ya library docs add karo taki AI latest API dekhe.

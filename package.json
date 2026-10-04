@@ -21,6 +21,9 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "check:docs": "node scripts/check-docs.mjs",
+    "check:unicode": "node scripts/check-hidden-unicode.mjs",
+    "guard": "node scripts/guard-diff.mjs",
+    "pack:context": "node scripts/context-pack.mjs",
     "audit:deps": "pnpm audit --audit-level high",
     "verify": "node scripts/verify.mjs"
   },
