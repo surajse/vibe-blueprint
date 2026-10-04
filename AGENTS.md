@@ -25,6 +25,8 @@ docs/TASKS.md (what next), docs/PROGRESS.md (current state + gotchas).
 - Never edit tests to make them pass unless the spec changed (say so explicitly).
 - Never read, print or commit secrets or .env* files.
 - TypeScript strict. No `any`. No `@ts-ignore` without a comment explaining why.
+- Android/Play: never change the app package name, signing keys or targetSdk downwards;
+  follow docs/PLAY_STORE.md. `NEXT_PUBLIC_*` / `EXPO_PUBLIC_*` values are public — no secrets.
 - Respect layers: UI -> hook -> api client -> route handler -> service
   -> repository -> DB. Never skip a layer.
 

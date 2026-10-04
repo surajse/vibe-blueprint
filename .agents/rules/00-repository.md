@@ -12,7 +12,10 @@ Key files the agent should read every session:
 - `docs/PROGRESS.md` — current state + gotchas (living memory)
 - `docs/TASKS.md` + `docs/tasks/T-xxx.md` — what to build next
 - `docs/PRD.md`, `docs/ARCHITECTURE.md` — what and how
-- `prompts/` — phase prompts P0–P9 and reusable T/D/R/V/H/M prompts
+- `prompts/` — phase prompts P0–P10 and reusable T/D/R/V/H/M prompts
+
+Antigravity (IDE >= 1.20.5) also reads `AGENTS.md` natively; this shim is a harmless fallback
+for older versions. Other tools: see `docs/TOOLING.md`.
 
 Note: `.cursor/rules/*.mdc` are Cursor-specific and not read by Antigravity.
 Their substance is already covered by `AGENTS.md`.

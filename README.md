@@ -1,5 +1,8 @@
 # vibe-blueprint
 
+[![CI](https://github.com/surajse/vibe-blueprint/actions/workflows/ci.yml/badge.svg)](https://github.com/surajse/vibe-blueprint/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **Make AI-assisted ("vibe") coding reliable.** A GitHub template repository that
 keeps context in files (not chat), enforces strict rules, slices work into small
 tasks, and verifies everything with automated gates.
@@ -26,7 +29,7 @@ Hallucination ↓  =  Grounding ↑  +  Task size ↓  +  Verification ↑  +  M
 1. **Use this template** on GitHub → clone your new repo.
 2. `pnpm install`
 3. Open in Cursor → paste the **Master Bootstrap Prompt** (`docs/BLUEPRINT.md` §5) — or just start at P0.
-4. New app: run the phase prompts in `prompts/` one by one: **P0 → P9**.
+4. New app: run the phase prompts in `prompts/` one by one: **P0 → P10** (P10 = Google Play launch).
 5. Feature work: pick the next task from `docs/TASKS.md`, open a **new chat**, paste `prompts/T-task.md`.
 
 ## Workflow
@@ -37,7 +40,7 @@ flowchart LR
     P3 --> P4[Scaffold] --> P5[DB + Auth]
     P5 --> LOOP{{Feature loop}}
     LOOP --> |T-task prompt<br/>1 task = 1 chat = 1 branch = 1 PR| LOOP
-    LOOP --> P7[Hardening] --> P8[Deploy] --> P9[Release]
+    LOOP --> P7[Hardening] --> P8[Deploy] --> P9[Release] --> P10[Play Store]
 ```
 
 **Daily loop (every feature):**
@@ -62,12 +65,16 @@ vibe-blueprint/
 ├── docs/
 │   ├── BLUEPRINT.md          # the full playbook
 │   ├── PRD.md / ARCHITECTURE.md / TECH_STACK.md
+│   ├── ENVIRONMENTS.md / RELEASE.md / RUNBOOK.md / OBSERVABILITY.md
+│   ├── PLAY_STORE.md / WEB_LAUNCH.md   # production launch checklists
+│   ├── TOOLING.md            # Cursor / Antigravity / Codex / Claude Code adapters
 │   ├── DATA_MODEL.md / API_CONTRACT.md / DESIGN_SYSTEM.md / SECURITY.md / TESTING.md
 │   ├── PROGRESS.md           # living memory — update after EVERY task
 │   ├── TASKS.md + tasks/     # vertical-slice tasks
 │   └── decisions/            # ADRs
-├── prompts/                  # P0–P9 phase prompts + T/D/R/V/H/M reusable prompts
+├── prompts/                  # P0–P10 phase prompts + T/D/R/V/H/M reusable prompts
 ├── packages/shared/          # walking skeleton: 1 function + 1 test (green from commit 1)
+├── scripts/check-docs.mjs    # fails if prompts/rules reference files that don't exist
 ├── scripts/verify.sh         # pnpm verify: format → lint → typecheck → test → build
 └── .github/                  # CI (verify + gitleaks + CodeQL), PR/issue templates, Dependabot
 ```
@@ -83,6 +90,14 @@ vibe-blueprint/
 | L5 Task slicing | Small bounded work                   | `docs/TASKS.md`, 1 task = 1 chat         |
 | L6 Gates        | Machine verification                 | `pnpm verify`, CI, e2e, CodeQL, gitleaks |
 | L7 Review & Ops | Humans + monitoring                  | PR template, Sentry, preview deploys     |
+
+## Production targets
+
+| Target                                | Covered by                                                                              |
+| ------------------------------------- | --------------------------------------------------------------------------------------- |
+| Website                               | `docs/WEB_LAUNCH.md`, `prompts/P8-deploy.md`, `prompts/P9-release.md`                   |
+| Android / Google Play                 | `docs/PLAY_STORE.md`, `.cursor/rules/035-android-play.mdc`, `prompts/P10-play-store.md` |
+| Google Play gates verified 2026-10-04 | target API 36; personal accounts need a 12-tester / 14-day closed test                  |
 
 ## FAQ
 

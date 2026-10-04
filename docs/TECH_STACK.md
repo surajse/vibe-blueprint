@@ -1,9 +1,10 @@
 # Tech stack
 
-> **Version policy:** No versions are written here on purpose. At bootstrap,
-> take the latest stable from the official generators, **pin the exact
-> version**, commit the lockfile, and have the AI verify against the docs.
-> The stack below is the default: changing it requires an ADR.
+> **Version policy:** App-stack libraries (Next.js, Expo, Supabase, Tailwind…) are **not** listed with
+> versions on purpose: at P4 take the latest stable from the official generators, **pin the exact
+> version**, commit the lockfile, and have the AI verify against the docs. The **toolchain** below is
+> pinned and verified. Shared dev-tool versions live in `pnpm-workspace.yaml` (`catalog:`).
+> Changing the stack requires an ADR.
 
 | Layer            | Choice                                                          | Anti-hallucination reason                   | Alternative        |
 | ---------------- | --------------------------------------------------------------- | ------------------------------------------- | ------------------ |
@@ -30,16 +31,26 @@
 
 ## Pinned at bootstrap (2026-10-04, verified via `npm view`)
 
-| Package           | Version | Note                                                                                |
-| ----------------- | ------- | ----------------------------------------------------------------------------------- |
-| pnpm              | 12.9.1  | `packageManager` field                                                              |
-| node              | 24.20.0 | `.nvmrc`; active LTS until 2026-10-20, then Node 26 (LTS from 2026-10-28)           |
-| turbo             | 2.11.7  |                                                                                     |
-| typescript        | 5.9.3   | Latest 5.x line; TS 7 (native port) exists but tooling lags — re-evaluate quarterly |
-| vitest            | 4.1.11  | Latest 4.x line; vitest 5.x is days old — re-evaluate quarterly                     |
-| eslint            | 10.12.0 | Flat config                                                                         |
-| @eslint/js        | 10.0.1  |                                                                                     |
-| typescript-eslint | 8.71.0  |                                                                                     |
-| prettier          | 3.9.9   |                                                                                     |
+| Package           | Version | Note                                                                                                          |
+| ----------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| pnpm              | 12.9.1  | `packageManager` field                                                                                        |
+| node              | 24.20.0 | `.nvmrc`; active LTS until 2026-10-20, then Node 26 (LTS from 2026-10-28)                                     |
+| turbo             | 2.11.7  |                                                                                                               |
+| typescript        | 5.9.3   | Latest is 7.x (6.0 also exists). Majors are manual upgrades (Dependabot ignores them) — re-evaluate quarterly |
+| vitest            | 4.1.11  | 5.x exists; major upgrade is manual (Dependabot ignores majors) — re-evaluate quarterly                       |
+| eslint            | 10.12.0 | Flat config                                                                                                   |
+| @eslint/js        | 10.0.1  |                                                                                                               |
+| typescript-eslint | 8.71.0  |                                                                                                               |
+| prettier          | 3.9.9   |                                                                                                               |
 
 Re-verify quarterly (see README "tested with" date).
+
+## Android / Google Play constraints (verified 2026-10-04)
+
+| Constraint                                | Value                                                             |
+| ----------------------------------------- | ----------------------------------------------------------------- |
+| Target API level for new apps and updates | **36** (Android 16), required since 2026-08-31                    |
+| Existing apps                             | must target **35+** to stay visible to new users on newer Android |
+| Upload format                             | Android App Bundle (.aab)                                         |
+
+Details and the full checklist: `docs/PLAY_STORE.md`.

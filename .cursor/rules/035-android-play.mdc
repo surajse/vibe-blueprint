@@ -1,0 +1,14 @@
+---
+description: Android / Google Play release safety for the mobile app
+globs: apps/mobile/**
+alwaysApply: false
+---
+
+- Follow docs/PLAY_STORE.md. Target API level 36+ is required by Google Play; never lower it.
+- Never change the Android `applicationId`/package name, signing config or keystores. Ask first.
+- Do not hand-edit generated `android/` folders; change `app.config.*` / config plugins instead (ADR for native code).
+- Permissions: request the minimum, only at the moment of use, and list each one in the PR description.
+- Secrets never go in `EXPO_PUBLIC_*` variables: they are bundled into the app.
+- Support edge-to-edge and predictive back; test on an API 36 emulator and one low-end device.
+- Any feature creating accounts must include in-app account deletion.
+- Version codes are auto-incremented by EAS; never hand-edit them.

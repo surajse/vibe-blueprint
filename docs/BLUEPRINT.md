@@ -16,7 +16,7 @@
 3. The fix: 7-layer anti-hallucination system
 4. GitHub repo design (`vibe-blueprint`) + exact file contents
 5. Master Bootstrap Prompt (Cursor builds the repo)
-6. Phase prompts P0–P9 (Cursor builds your app A→Z)
+6. Phase prompts P0–P10 (Cursor builds your app A→Z, then ships to Google Play)
 7. Reusable prompts (task, debug, recovery, review, audit)
 8. How to use this repo on your vibe-coding platform
 9. Tech stack decisions
@@ -47,7 +47,7 @@ Hallucination ↓  =  Grounding ↑  +  Task size ↓  +  Verification ↑  +  M
 2. Is file ko repo me `docs/BLUEPRINT.md` naam se rakho. Commit karo.
 3. Cursor me repo kholo → **Section 5 ka Master Bootstrap Prompt** paste karo.
 4. Cursor rules, docs, CI, scripts bana dega. Aap review karke commit karo.
-5. Naya app banana ho: **Use this template** → clone → Cursor me open → **Section 6** ke prompts P0 se P9 tak, ek ek karke.
+5. Naya app banana ho: **Use this template** → clone → Cursor me open → **Section 6** ke prompts P0 se P10 tak, ek ek karke.
 
 ---
 
@@ -344,7 +344,7 @@ vibe-blueprint/
 │   ├── decisions/ADR-0000-template.md
 │   └── tasks/T-000-template.md
 ├── prompts/                      # Section 6 + 7 ke prompts, ek ek file
-│   ├── P0-discovery.md ... P9-release.md
+│   ├── P0-discovery.md ... P10-play-store.md
 │   └── T-task.md  D-debug.md  R-recovery.md  V-review.md  H-audit.md  M-memory.md
 ├── packages/shared/              # walking skeleton: 1 function + 1 test (verify day-0 green)
 ├── apps/                         # P4 me scaffold hoga (web, mobile)
@@ -797,7 +797,7 @@ attempt a third blind fix.
 
 ---
 
-## 6. Phase prompts P0–P9 (build your app A→Z)
+## 6. Phase prompts P0–P10 (build your app A→Z)
 
 > Har prompt naye chat me, Agent mode me. Pehle `@AGENTS.md @docs/PROGRESS.md` attach karo. Ek phase khatam → review → commit → agla.
 
@@ -911,6 +911,11 @@ a lawyer must review), Play Store listing checklist (assets, data-safety form,
 screenshots, test track), and a post-launch monitoring plan (alerts, KPIs from PRD).
 Run the full e2e suite and a final `pnpm verify`. List anything unverified.
 ```
+
+### P10 — Google Play launch
+
+The authoritative, always-current text of this prompt is `prompts/P10-play-store.md`, and the
+verified gates are in `docs/PLAY_STORE.md` (target API 36; closed test for personal accounts).
 
 ---
 
@@ -1309,9 +1314,18 @@ Version: 0.1 Owner: <name> Status: draft | approved Last updated: <date>
 4. Branch protection on `main`: PR required, CI required, no force-push.
 5. Issues/Discussions ON; `CONTRIBUTING.md` me "Gotchas learned" contributions welcome.
 6. `CHANGELOG.md` + semantic version tags (v0.1.0).
-7. Dogfood: is repo se ek chhota real app (e.g. todo) P0→P9 tak bana ke `examples/` me daalo. Isse prompts ki kamiyan pakdi jaati hain.
+7. Dogfood: is repo se ek chhota real app (e.g. todo) P0→P10 tak bana ke `examples/` me daalo. Isse prompts ki kamiyan pakdi jaati hain.
 8. Cursor/tool UI badalte rehte hain: README me "tested with" date likho aur har quarter prompts re-verify karo.
 
 ---
 
 **End of blueprint.** Rule yaad rakho: _Repo = memory. Tests = truth. Chhota task = kam hallucination._
+
+---
+
+## Appendix A — v0.2 production hardening (2026-10-04)
+
+Added after a real audit of this repo: see `docs/AUDIT-2026-10-04.md` for every finding, how it
+was verified, and what changed. Highlights: `scripts/check-docs.mjs` (dead-reference detector),
+pnpm `catalog:` (single version source), hardened CI, Android/Play Store pipeline docs, web launch
+checklist, environments/release/runbook/observability docs, cross-tool adapters (`docs/TOOLING.md`).

@@ -4,13 +4,22 @@ on:
   push:
     branches: [main]
 
-# Action pins last verified 2026-10-04 — re-verify majors quarterly:
+# Least privilege by default; jobs elevate only what they need.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Action pins last verified 2026-10-04 (git ls-remote --tags) — re-verify majors quarterly:
 # actions/checkout v7, pnpm/action-setup v6, actions/setup-node v7,
-# gitleaks/gitleaks-action v3, github/codeql-action v4.
+# gitleaks/gitleaks-action v3, github/codeql-action v4, actions/dependency-review-action v3.
 
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6 # reads packageManager from package.json
@@ -21,8 +30,32 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm verify
 
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit:deps
+
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: high
+
   secrets-scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
         with:
@@ -33,7 +66,10 @@ jobs:
 
   codeql:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
+      contents: read
+      actions: read
       security-events: write
     steps:
       - uses: actions/checkout@v7

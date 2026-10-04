@@ -1,0 +1,31 @@
+# EXAMPLE — copy to .github/workflows/ after P4 when apps/mobile exists and `eas build` works locally.
+# Needs repo secret EXPO_TOKEN. Verify action majors first: git ls-remote --tags https://github.com/expo/expo-github-action
+name: Android build (EAS)
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: expo/expo-github-action@v9
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm verify
+      - name: Build production AAB
+        working-directory: apps/mobile
+        run: eas build --platform android --profile production --non-interactive --no-wait

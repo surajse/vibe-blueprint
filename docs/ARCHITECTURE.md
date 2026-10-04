@@ -57,6 +57,50 @@ supabase/     migrations/ • seed.sql • config.toml
 docs/ • prompts/ • scripts/ • .github/ • .cursor/
 ```
 
+## Enforcing the layers (copy into the app's `eslint.config.mjs` at P4)
+
+Layers only help if a machine enforces them. Example for the web app (adjust paths to the real tree):
+
+```js
+// apps/web/eslint.config.mjs (excerpt)
+export default [
+  {
+    files: ['src/components/**', 'src/features/**/components/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/server/repositories/**', '**/server/services/**'],
+              message: 'UI must not import services/repositories. Go through hooks -> api client.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/server/services/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@supabase/*'],
+              message: 'Services must not touch the DB client. Use a repository.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+];
+```
+
+Add a failing example import to a test or PR description to prove the rule fires.
+
 ## Conventions
 
 | Topic              | Standard                                                                                             |

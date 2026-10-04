@@ -1,5 +1,6 @@
 .env
 .env.*
+!.env.example
 node_modules/
 .next/
 .expo/
@@ -9,3 +10,8 @@ coverage/
 pnpm-lock.yaml
 *.pem
 *.key
+*.jks
+*.keystore
+*.p12
+google-services.json
+service-account*.json

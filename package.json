@@ -1,7 +1,17 @@
 {
   "name": "vibe-blueprint",
+  "version": "0.2.0",
   "private": true,
+  "description": "Make AI-assisted coding reliable: context in files, strict rules, small tasks, automated gates.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/surajse/vibe-blueprint.git"
+  },
   "packageManager": "pnpm@12.9.1",
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
@@ -10,15 +20,17 @@
     "test": "turbo run test",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
+    "check:docs": "node scripts/check-docs.mjs",
+    "audit:deps": "pnpm audit --audit-level high",
     "verify": "bash scripts/verify.sh"
   },
   "devDependencies": {
-    "@eslint/js": "10.0.1",
-    "eslint": "10.12.0",
+    "@eslint/js": "catalog:",
+    "eslint": "catalog:",
     "prettier": "3.9.9",
     "turbo": "2.11.7",
-    "typescript": "5.9.3",
-    "typescript-eslint": "8.71.0",
-    "vitest": "4.1.11"
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "vitest": "catalog:"
   }
 }
