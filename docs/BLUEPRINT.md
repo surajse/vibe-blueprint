@@ -14,8 +14,8 @@
 1. Quick start (10 min)
 2. The 100-question debate (psychological + logical)
 3. The fix: 7-layer anti-hallucination system
-4. GitHub repo design (`vibe-blueprint`) + exact file contents
-5. Master Bootstrap Prompt (Cursor builds the repo)
+4. GitHub repo design (`vibe-blueprint`)
+5. Master Bootstrap Prompt (maintainers only → docs/MAINTAINERS.md)
 6. Phase prompts P0–P10 (Cursor builds your app A→Z, then ships to Google Play)
 7. Reusable prompts (task, debug, recovery, review, audit)
 8. How to use this repo on your vibe-coding platform
@@ -41,13 +41,22 @@ Hallucination ↓  =  Grounding ↑  +  Task size ↓  +  Verification ↑  +  M
 
 ---
 
-## 1. Quick start (10 min)
+## 1. Quick start
 
-1. GitHub pe **public repo** banao: `vibe-blueprint` (MIT license). Settings → "Template repository" ON.
-2. Is file ko repo me `docs/BLUEPRINT.md` naam se rakho. Commit karo.
-3. Cursor me repo kholo → **Section 5 ka Master Bootstrap Prompt** paste karo.
-4. Cursor rules, docs, CI, scripts bana dega. Aap review karke commit karo.
-5. Naya app banana ho: **Use this template** → clone → Cursor me open → **Section 6** ke prompts P0 se P10 tak, ek ek karke.
+### Users — naya app banana hai (99% log yahi hain)
+
+1. GitHub pe **Use this template** → apna repo banao → clone karo.
+2. `pnpm install`
+3. Cursor (ya koi AI IDE) me kholo → `prompts/P0-discovery.md` se shuru karo, P0 → P10 tak ek-ek karke.
+4. Har feature: `docs/TASKS.md` se task chuno → naya chat → `prompts/T-task.md`.
+
+> ⚠️ **Master Bootstrap Prompt mat chalao** — woh repo _banata_ hai. Template se aapka repo
+> already bana hua hai; use chalane se files overwrite/duplicate hongi.
+
+### Maintainers — template ko rebuild ya maintain karna hai
+
+1. `docs/MAINTAINERS.md` padho — usme Bootstrap Prompt hai jo real files ko source of truth maanta hai.
+2. Changes hamesha real files me karo; is playbook me file contents ki embedded copies mat rakho (Q14).
 
 ---
 
@@ -109,7 +118,7 @@ goes down, verification goes up, and memory lives in files (Q100).
 
 ### 4.1 Tree
 
-```
+```text
 vibe-blueprint/
 ├── AGENTS.md                     # AI ko har session me padhna hai
 ├── README.md
@@ -126,667 +135,147 @@ vibe-blueprint/
 │   │   ├── 010-security.mdc      # alwaysApply
 │   │   ├── 020-web-nextjs.mdc    # globs: apps/web/**
 │   │   ├── 030-mobile-expo.mdc   # globs: apps/mobile/**
+│   │   ├── 035-android-play.mdc  # globs: apps/mobile/**, Play release
 │   │   ├── 040-database.mdc      # globs: supabase/**, packages/db/**
 │   │   └── 050-testing.mdc       # globs: **/*.test.*, e2e/**
 │   └── mcp.json.example
 ├── docs/
-│   ├── BLUEPRINT.md              # yeh file
-│   ├── PRD.md                    # Section 11 template
-│   ├── ARCHITECTURE.md           # Section 10
-│   ├── TECH_STACK.md             # Section 9
-│   ├── DATA_MODEL.md
-│   ├── API_CONTRACT.md
-│   ├── DESIGN_SYSTEM.md
-│   ├── SECURITY.md
-│   ├── TESTING.md
+│   ├── BLUEPRINT.md              # yeh file — playbook (links, not embeds)
+│   ├── MAINTAINERS.md            # template maintainers ke liye
+│   ├── QA.md                     # 100-question debate
+│   ├── FRESHNESS.md              # dated facts: fact | source | checked
+│   ├── PRD.md  ARCHITECTURE.md  TECH_STACK.md
+│   ├── DATA_MODEL.md  API_CONTRACT.md  DESIGN_SYSTEM.md
+│   ├── SECURITY.md  TESTING.md  OBSERVABILITY.md
 │   ├── PROGRESS.md               # living memory
-│   ├── TASKS.md
+│   ├── TASKS.md  BACKLOG.md  GLOSSARY.md
+│   ├── UX.md                     # P2b wireframes
+│   ├── DATA_INVENTORY.md         # Play Data Safety ka source
+│   ├── ENVIRONMENTS.md  RELEASE.md  RUNBOOK.md  WEB_LAUNCH.md  TOOLING.md
+│   ├── PLAY_STORE.md             # verified Play gates
 │   ├── decisions/ADR-0000-template.md
 │   └── tasks/T-000-template.md
-├── prompts/                      # Section 6 + 7 ke prompts, ek ek file
-│   ├── P0-discovery.md ... P10-play-store.md
+├── prompts/                      # har prompt ek file — wahi authoritative hai
+│   ├── P0-discovery.md  P1-prd.md  P2-architecture.md  P2b-ux-wireframes.md
+│   ├── P3-tasks.md  P4-scaffold.md  P5-database-auth.md  P6-feature.md
+│   ├── P7-hardening.md  P8-deploy.md  P9-release.md  P10-play-store.md
 │   └── T-task.md  D-debug.md  R-recovery.md  V-review.md  H-audit.md  M-memory.md
 ├── packages/shared/              # walking skeleton: 1 function + 1 test (verify day-0 green)
 ├── apps/                         # P4 me scaffold hoga (web, mobile)
 ├── supabase/migrations/
-├── scripts/verify.sh
+├── scripts/verify.mjs            # pnpm verify — cross-platform
 └── .github/
     ├── workflows/ci.yml
+    ├── workflows/freshness.yml    # quarterly re-verify reminder
     ├── PULL_REQUEST_TEMPLATE.md
     ├── ISSUE_TEMPLATE/{bug.md,feature.md}
     └── dependabot.yml
 ```
 
-### 4.2 `AGENTS.md` (exact content)
+### 4.2 `AGENTS.md` — the source of truth, never a copy
 
-```md
-# AGENTS.md — Read this first, every session
+The real file is [`AGENTS.md`](../AGENTS.md) at the repo root: mandatory session-start
+protocol, sources of truth, hard rules (never invent APIs/names/paths, scope fence,
+no `any`, no placeholders), Definition of Done, stuck protocol.
 
-## Project
-
-<APP_NAME>: <one-line description>.
-Sources of truth: docs/PRD.md (what), docs/ARCHITECTURE.md (how),
-docs/TASKS.md (what next), docs/PROGRESS.md (current state + gotchas).
-
-## Session start protocol (mandatory)
-
-1. Read docs/PROGRESS.md and the current task file docs/tasks/T-xxx.md.
-2. Restate: the task, acceptance criteria, and the exact files you will touch.
-3. If the change touches more than 5 files, STOP and wait for my approval.
-4. Search the codebase before creating anything (existing util / component / type?).
-
-## Hard rules
-
-- NEVER invent APIs, packages, env vars, table/column names or file paths.
-  Verify by reading the file, the official docs, or `npm view <pkg>`.
-  If unsure, say "I don't know — I need X" instead of guessing.
-- No new dependency without my approval (state name, why, size, alternatives).
-- Scope fence: touch only the files listed in the task. No drive-by refactors,
-  renames or formatting changes.
-- No placeholders, TODOs, mock data or stubbed functions in production paths.
-- Never edit tests to make them pass unless the spec changed (say so explicitly).
-- Never read, print or commit secrets or .env* files.
-- TypeScript strict. No `any`. No `@ts-ignore` without a comment explaining why.
-- Respect layers: UI -> hook -> api client -> route handler -> service
-  -> repository -> DB. Never skip a layer.
-
-## Definition of Done (all required)
-
-- `pnpm verify` passes (format, lint, typecheck, test, build). Paste real output.
-- New behavior has tests (unit; e2e for user flows).
-- Loading, empty, error and offline states handled.
-- docs/PROGRESS.md updated; ADR added if a decision was made.
-
-## When stuck
-
-After 2 failed attempts: stop. Summarize what you tried, the evidence (logs),
-and 2 hypotheses. Do not attempt a third blind fix.
-
-## Response format for every task
-
-Plan -> Changes (file list) -> Verification output -> Risks/Assumptions -> Next step.
-```
+> This playbook used to embed its content. The copy drifted — it missed the Android/Play
+> and public-env rules the real file had. Single source of truth = the real file (Q14).
 
 ### 4.3 `.cursor/rules/*.mdc`
 
-> **Dhyan:** Rules sirf `.mdc` extension me kaam karte hain. Plain `.md` rules folder me ignore ho jati hai. Har rule 500 lines se chhota rakho. Always-on (`alwaysApply: true`) rules ka combined size ~2000 tokens ke andar rakho — yeh har session ka context budget khate hain.
+Behaviour guardrails live in [`../.cursor/rules/`](../.cursor/rules/) — one `.mdc` file
+per concern, with `description`/`globs`/`alwaysApply` frontmatter:
 
-**`000-core.mdc`**
+| File                   | Scope                                       |
+| ---------------------- | ------------------------------------------- |
+| `000-core.mdc`         | alwaysApply — session protocol, scope fence |
+| `010-security.mdc`     | alwaysApply — secrets, RLS, uploads, auth   |
+| `020-web-nextjs.mdc`   | `apps/web/**`                               |
+| `030-mobile-expo.mdc`  | `apps/mobile/**`                            |
+| `035-android-play.mdc` | `apps/mobile/**`, Play release              |
+| `040-database.mdc`     | `supabase/**`, `packages/db/**`             |
+| `050-testing.mdc`      | `**/*.test.*`, `e2e/**`                     |
 
-```md
----
-description: Core engineering rules for every task
-globs:
-alwaysApply: true
----
-
-- Follow AGENTS.md. If a rule here conflicts with it, AGENTS.md wins.
-- Plan first, then code. Wait for approval on plans touching >5 files.
-- One task per chat. Stay inside the task's allowed-files list.
-- Verify before claiming done: run `pnpm verify`, paste the output.
-- Prefer existing utilities/components. Search before creating.
-- Small, reviewable diffs. Conventional Commits (feat:, fix:, chore:, docs:, test:).
-- Say "I don't know" instead of guessing. Cite the file or doc you relied on.
-```
-
-**`010-security.mdc`**
-
-```md
----
-description: Security baseline, always on
-globs:
-alwaysApply: true
----
-
-- Never hardcode secrets. Read config via the typed env module only.
-- Validate ALL external input with Zod at the boundary (API, forms, webhooks).
-- Database: Row Level Security ON for every table; write policies with tests.
-- Never trust client-supplied user IDs; derive from the verified session.
-- Parameterized queries only. No string-built SQL.
-- Never log tokens, passwords, PII.
-- Add rate limiting to auth and any expensive endpoint.
-- Escape/encode user content; no dangerouslySetInnerHTML without sanitization.
-```
-
-**`020-web-nextjs.mdc`**
-
-```md
----
-description: Next.js web app conventions
-globs: apps/web/**
-alwaysApply: false
----
-
-- Next.js App Router, TypeScript strict, Tailwind + shadcn/ui components.
-- Server Components by default; add "use client" only when needed.
-- Data access only via the service/repository layers, never directly in components.
-- Forms: React Hook Form + Zod schema from packages/shared.
-- Every route has loading, empty and error UI. Accessibility: semantic HTML, labels, focus states.
-- Verify Next.js APIs against the official docs for the INSTALLED version before use.
-```
-
-**`030-mobile-expo.mdc`**
-
-```md
----
-description: Expo / React Native conventions
-globs: apps/mobile/**
-alwaysApply: false
----
-
-- Expo managed workflow + Expo Router. No ejecting without an ADR.
-- Install packages with `npx expo install <pkg>` so versions match the Expo SDK.
-- No native-module code unless the Expo SDK provides it; ask first.
-- Handle permissions, offline state, keyboard avoidance, safe areas.
-- Reuse validation + types from packages/shared. API calls via the shared api client.
-- Test critical flows with Maestro; paste emulator logs when debugging.
-```
-
-**`040-database.mdc`**
-
-```md
----
-description: Database and migrations
-globs: supabase/**, packages/db/**
-alwaysApply: false
----
-
-- Schema changes ONLY via new migration files in supabase/migrations. Never edit old ones.
-- After each migration: regenerate TS types, update docs/DATA_MODEL.md.
-- Every table: primary key, created_at, updated_at, RLS enabled + policies + RLS tests.
-- Add indexes for every foreign key and every frequent filter.
-- Do not invent column names; read DATA_MODEL.md and the generated types.
-```
-
-**`050-testing.mdc`**
-
-```md
----
-description: Testing conventions
-globs: **/*.test.ts, **/*.test.tsx, e2e/**
-alwaysApply: false
----
-
-- Test behavior, not implementation. Arrange-Act-Assert. Descriptive names.
-- Never modify an existing test to make it pass unless the spec changed; explain why.
-- Unit: Vitest. Web e2e: Playwright. Mobile e2e: Maestro.
-- No real network calls in unit tests; e2e uses a local/test database.
-- A bug fix must start with a failing regression test.
-```
+Always-on rules stay few and short (~2000 tokens combined — heuristic, Q39). A new rule
+needs a why + Q# reference, or quarterly review removes it (Q64).
 
 ### 4.4 `.cursorignore`
 
-```
-.env
-.env.*
-node_modules/
-.next/
-.expo/
-dist/
-build/
-coverage/
-pnpm-lock.yaml
-*.pem
-*.key
-```
+Lives at [`../.cursorignore`](../.cursorignore): secrets, build output, lockfile noise.
+Not a security boundary — secrets don't belong in the repo folder at all (Q37).
 
 ### 4.5 `docs/PROGRESS.md` (living memory)
 
-```md
-# PROGRESS — update after EVERY task
-
-## Current state
-
-- Phase: P_ | Branch: ____ | Last green commit: ____
-
-## Done
-
-- [x] T-000 Repo bootstrapped
-
-## In progress
-
-- [ ]
-
-## Decisions (link ADRs)
-
-- ADR-0001:
-
-## Known issues / tech debt
-
--
-
-## Working commands (verified)
-
-- Install: pnpm install
-- Verify: pnpm verify
-- Dev web: pnpm --filter web dev
-
-## Gotchas learned (AI mistakes — never repeat)
-
-- <date> AI invented `<thing>`; the correct one is `<thing>`.
-```
+Template: [`docs/PROGRESS.md`](PROGRESS.md) — current state, decisions, gotchas, working
+commands. Updated at the end of every task; no update = no merge (Q65).
 
 ### 4.6 `docs/tasks/T-000-template.md`
 
-```md
-# T-### <Title>
-
-Status: todo | doing | done PRD refs: FR-001, US-002
-
-## Goal (1–2 lines)
-
-## Acceptance criteria
-
-- Given ... When ... Then ...
-
-## Files allowed to touch
-
--
-
-## Files forbidden
-
--
-
-## References (docs links, existing files to imitate)
-
--
-
-## Tests to write first
-
--
-
-## Verify
-
-- pnpm verify
-- <manual click-through steps>
-```
+Template: [`docs/tasks/T-000-template.md`](tasks/T-000-template.md) — goal, acceptance
+criteria, allowed/forbidden files, tests-first, verify steps. One task = one file.
 
 ### 4.7 `docs/decisions/ADR-0000-template.md`
 
-```md
-# ADR-#### <Decision title>
+Template: [`docs/decisions/ADR-0000-template.md`](decisions/ADR-0000-template.md) —
+context, options with trade-offs, decision, consequences. New patterns need an ADR (Q52).
 
-Date: YYYY-MM-DD Status: proposed | accepted | superseded
+### 4.8 `scripts/verify.mjs` and root `package.json` scripts
 
-## Context
-
-## Options considered (with trade-offs)
-
-## Decision
-
-## Consequences
-```
-
-### 4.8 `scripts/verify.sh` and root `package.json` scripts
-
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-pnpm format:check
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
-echo "VERIFY OK"
-```
-
-```json
-{
-  "name": "vibe-blueprint",
-  "private": true,
-  "packageManager": "pnpm@<pin-exact-version-at-bootstrap>",
-  "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
-    "format:check": "prettier --check .",
-    "format": "prettier --write .",
-    "verify": "bash scripts/verify.sh"
-  }
-}
-```
+`pnpm verify` runs [`../scripts/verify.mjs`](../scripts/verify.mjs): format → lint →
+typecheck → test → build → docs-check. Cross-platform (Node, no bash needed). "Done" =
+its real output, pasted (Q41).
 
 ### 4.9 `.github/workflows/ci.yml`
 
-```yaml
-# Action pins last verified 2026-10-04. Dated facts (including these pins) live in
-# docs/FRESHNESS.md — re-verify majors quarterly, never trust a comment's date.
-name: CI
-on:
-  pull_request:
-  push:
-    branches: [main]
-
-jobs:
-  verify:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7 # pins last verified 2026-10-04; re-verify majors at bootstrap
-      - uses: pnpm/action-setup@v6 # reads packageManager from package.json
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm verify
-
-  secrets-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  codeql:
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-    steps:
-      - uses: actions/checkout@v7
-      - uses: github/codeql-action/init@v4
-        with:
-          languages: javascript-typescript
-      - uses: github/codeql-action/analyze@v4
-```
+The real workflow: [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml) — verify,
+gitleaks secrets scan, CodeQL, dependency audit + review. Least-privilege permissions,
+concurrency, timeouts. Dated facts (action majors) live in [`docs/FRESHNESS.md`](FRESHNESS.md),
+not in comments.
 
 ### 4.10 `.github/PULL_REQUEST_TEMPLATE.md`
 
-```md
-## What & why
+Template: [`../.github/PULL_REQUEST_TEMPLATE.md`](../.github/PULL_REQUEST_TEMPLATE.md) —
+what & why, checklist (including PROGRESS.md update), risks/assumptions.
 
-Task: T-### PRD refs:
+## 5. Master Bootstrap Prompt (maintainers only)
 
-## Checklist
-
-- [ ] `pnpm verify` passes (paste output summary)
-- [ ] Tests added/updated (no test edited just to pass)
-- [ ] Loading / empty / error states covered
-- [ ] No new dependency (or approved + justified)
-- [ ] No secrets, no TODO/mock in prod paths
-- [ ] docs/PROGRESS.md updated; ADR added if needed
-- [ ] Manually clicked through the acceptance criteria
-
-## Risks / assumptions
-```
-
----
-
-## 5. Master Bootstrap Prompt (Cursor builds the repo itself)
-
-**Setup:** Empty repo me `docs/BLUEPRINT.md` (yeh file) rakho. Cursor Agent mode me naya chat kholo. Yeh prompt paste karo.
-
-```text
-ROLE
-You are a senior staff engineer and technical writer building an open-source GitHub
-template repository named "vibe-blueprint". Its purpose: make AI-assisted ("vibe")
-coding reliable by keeping context in files, enforcing strict rules, slicing work
-into small tasks, and verifying everything with automated gates.
-
-SOURCE OF TRUTH
-Read @docs/BLUEPRINT.md completely before doing anything. It contains the exact
-content for AGENTS.md, all .cursor/rules/*.mdc files, .cursorignore, PROGRESS.md,
-task and ADR templates, scripts/verify.sh, package.json scripts, CI workflow, PR
-template, the prompts (Sections 6 and 7), the stack (Section 9), the architecture
-(Section 10) and the PRD template (Section 11).
-Do NOT invent anything that is not in it. If something is missing or ambiguous,
-STOP and ask me. Do not guess.
-
-HARD CONSTRAINTS
-- Copy file contents exactly from BLUEPRINT.md where given. Do not paraphrase them.
-- Rules files must use the .mdc extension with frontmatter (description, globs, alwaysApply).
-- No dependencies other than: turbo, prettier, typescript, vitest, eslint (+ the
-  minimum ESLint TypeScript config packages). Ask before adding anything else.
-- Pin exact versions in package.json; verify each package exists with `npm view <pkg> version`.
-- No placeholder code. Every script must run. Repo must be GREEN from commit 1.
-- Do NOT scaffold apps/web or apps/mobile now (that happens per-project in prompt P4).
-
-PROCESS: work in phases. After each phase, run the verification, show the REAL
-output, and wait for me to reply "continue". Never batch phases.
-
-PHASE A — Root config
-Create: package.json (scripts as in Section 4.8), pnpm-workspace.yaml (apps/*,
-packages/*), turbo.json (tasks: build, lint, typecheck, test, dev), tsconfig.base.json
-(strict: true, noUncheckedIndexedAccess: true), .prettierrc, .editorconfig, .gitignore,
-.nvmrc: exact Node version (never "lts/*"). Which line to pick and when is tracked
-in docs/FRESHNESS.md. Verify with `node -v` before committing., eslint config, .cursorignore.
-Verify: `pnpm install` succeeds.
-
-PHASE B — Walking skeleton
-Create packages/shared with: package.json, tsconfig, src/index.ts exporting one pure
-function (e.g. `slugify`), a Vitest test for it, and lint/typecheck/test/build scripts.
-Verify: `pnpm verify` passes. Paste the output.
-
-PHASE C — AI guardrails
-Create AGENTS.md and the six .cursor/rules/*.mdc files exactly as in Section 4.
-Create .cursor/mcp.json.example (placeholder only, no real keys).
-Verify: list the files; confirm each rule has valid frontmatter.
-
-PHASE D — Docs
-Create docs/: PRD.md (Section 11), ARCHITECTURE.md (Section 10), TECH_STACK.md
-(Section 9), DATA_MODEL.md, API_CONTRACT.md, DESIGN_SYSTEM.md, SECURITY.md, TESTING.md,
-PROGRESS.md, TASKS.md, decisions/ADR-0000-template.md, tasks/T-000-template.md.
-For DATA_MODEL, API_CONTRACT, DESIGN_SYSTEM, SECURITY, TESTING: write structured
-templates with headings and fill-in sections derived from Sections 9–10. No lorem ipsum.
-
-PHASE E — Prompts library
-Create prompts/P0-discovery.md ... P9-release.md and T-task.md, D-debug.md,
-R-recovery.md, V-review.md, H-audit.md, M-memory.md. Content must be exactly the
-prompts in Sections 6 and 7.
-
-PHASE F — GitHub automation
-Create .github/workflows/ci.yml, PULL_REQUEST_TEMPLATE.md, ISSUE_TEMPLATE/bug.md,
-ISSUE_TEMPLATE/feature.md, dependabot.yml (npm + github-actions, weekly).
-Check the latest major version of every GitHub Action before pinning.
-
-PHASE G — Community files
-Create README.md (what/why, 5-minute quick start, workflow diagram in Mermaid,
-folder map, FAQ), LICENSE (MIT), CONTRIBUTING.md, CODE_OF_CONDUCT.md, CHANGELOG.md.
-
-FINAL CHECK
-Run `pnpm verify`. Then give me: file tree, any assumptions you made, anything you
-could not verify, and suggested first commit message. Then stop.
-
-If at any point a command fails twice, stop and report the evidence. Do not
-attempt a third blind fix.
-```
-
----
+The repo-building prompt moved to [`docs/MAINTAINERS.md`](MAINTAINERS.md). It treats the
+repo's real files as the source of truth — it reads them, it never copies file contents
+out of this playbook. **Do not run it on an app repo** (§1).
 
 ## 6. Phase prompts P0–P10 (build your app A→Z)
 
-> Har prompt naye chat me, Agent mode me. Pehle `@AGENTS.md @docs/PROGRESS.md` attach karo. Ek phase khatam → review → commit → agla.
+> Har prompt naye chat me, Agent mode me. Pehle `@AGENTS.md @docs/PROGRESS.md` attach karo.
+> Ek phase khatam → review → commit → agla. The file in [`../prompts/`](../prompts/)
+> is authoritative, not the one-liner below.
 
-### P0 — Discovery (no code)
-
-```text
-Do NOT write code. Interview me to define the product.
-Ask at most 15 questions in ONE batch, grouped: problem & users, platforms (web /
-Android / iOS), core user journeys, monetization, auth & roles, data & integrations,
-compliance/privacy, scale & budget, launch deadline.
-After my answers, write docs/discovery.md with: summary, assumptions (clearly
-marked), risks, and open questions. Challenge weak ideas; tell me where I'm wrong.
-Do not decide technology yet.
-```
-
-### P1 — PRD
-
-```text
-Inputs: @docs/discovery.md @docs/PRD.md (template).
-Fill docs/PRD.md completely. Rules:
-- Every functional requirement gets an ID (FR-001...) and testable acceptance
-  criteria in Given/When/Then form. Every user story gets an ID (US-001...).
-- Separate "Assumptions" and "Open questions"; never silently decide.
-- Include explicit Non-goals and Out-of-scope.
-- No technology choices in the PRD.
-Finish by listing the 10 riskiest requirements and why. Wait for my approval.
-```
-
-### P2 — Architecture
-
-```text
-Inputs: @docs/PRD.md @docs/TECH_STACK.md @docs/ARCHITECTURE.md.
-Produce: ARCHITECTURE.md (adapted to this product), DATA_MODEL.md (tables, columns,
-types, relations, RLS policy per table), API_CONTRACT.md (every endpoint:
-method, path, auth, request/response Zod-style schema, error codes),
-DESIGN_SYSTEM.md (tokens, components, states), SECURITY.md (threat model).
-Rules: use the stack in TECH_STACK.md. Any deviation needs an ADR with options and
-trade-offs. Every PRD requirement must map to at least one table/endpoint/screen:
-output a traceability table (FR-ID -> screen -> endpoint -> table). No code.
-```
-
-### P3 — Task breakdown
-
-```text
-Inputs: @docs/PRD.md @docs/ARCHITECTURE.md @docs/API_CONTRACT.md @docs/tasks/T-000-template.md.
-Split the PRD into vertical-slice tasks (UI + API + DB + tests per slice). Each task
-<= 1 day, <= 5 files where possible, with dependencies. Create docs/TASKS.md
-(ordered list with status) and one docs/tasks/T-###.md per task using the template,
-including allowed files, forbidden files, tests to write first and verify steps.
-Order: foundation -> auth -> core feature 1 ... -> polish. Flag any task that is too big.
-```
-
-### P4 — Scaffold
-
-```text
-Inputs: @docs/TECH_STACK.md @docs/ARCHITECTURE.md @.cursor/rules.
-Scaffold apps/web (Next.js) and apps/mobile (Expo) and packages/{ui,db,config}
-using the OFFICIAL generators (create-next-app, create-expo-app). Do not hand-type
-boilerplate. Wire the pnpm workspace, TS paths, shared Zod package, typed env
-module (Zod) for each app, ESLint layer-boundary rule, Husky + lint-staged +
-commitlint. Use `npx expo install` for Expo packages.
-Verify against the official docs for the INSTALLED versions; cite the doc page.
-Run `pnpm verify` and show the real output. Update docs/PROGRESS.md.
-```
-
-### P5 — Database + Auth
-
-```text
-Inputs: @docs/DATA_MODEL.md @docs/SECURITY.md @.cursor/rules/040-database.mdc.
-Create Supabase migrations for the tables in DATA_MODEL.md with RLS policies,
-indexes and updated_at triggers. Generate TS types. Implement auth (sign up, sign in,
-sign out, session refresh, protected routes) on web and mobile, using the typed
-env module. Write RLS tests proving: a user cannot read or write another user's
-rows; anonymous is denied. Show the test output. No mock auth.
-```
-
-### P6 — Feature loop (repeat for every task)
-
-Use **Section 7-T** (task prompt). Ek task = ek chat = ek branch = ek PR.
-
-### P7 — Hardening
-
-```text
-Audit the whole repo against @docs/SECURITY.md and @docs/PRD.md.
-Check: RLS coverage on every table, input validation on every endpoint, authz
-on every route, rate limiting, secret handling, dependency audit, CORS, headers,
-accessibility (labels, contrast, focus, screen reader), loading/empty/error states
-on every screen, offline behavior on mobile, performance (bundle size, N+1 queries,
-indexes). Output a table: finding | severity | file | fix. Fix Critical/High items
-as separate small commits, each with a test. Do not refactor unrelated code.
-```
-
-### P8 — Deploy
-
-```text
-Set up deployment per @docs/ARCHITECTURE.md section "Deployment":
-Vercel for web (preview per PR), Supabase production project with migrations
-applied via CI, EAS Build/Update for Android, environment variable matrix
-(local / preview / production) documented in docs/ENVIRONMENTS.md, Sentry and
-PostHog wired with PII scrubbing, a /api/health endpoint, and database backups.
-Do NOT put real secrets in the repo or in chat; produce a checklist of secrets I
-must add manually in each dashboard. Verify with a preview deployment checklist.
-```
-
-### P9 — Release
-
-```text
-Create: release checklist (docs/RELEASE.md), rollback plan, incident runbook,
-README for end users, CHANGELOG entry, privacy policy + terms outline (flag that
-a lawyer must review), Play Store listing checklist (assets, data-safety form,
-screenshots, test track), and a post-launch monitoring plan (alerts, KPIs from PRD).
-Run the full e2e suite and a final `pnpm verify`. List anything unverified.
-```
-
-### P10 — Google Play launch
-
-The authoritative, always-current text of this prompt is `prompts/P10-play-store.md`, and the
-verified gates are in `docs/PLAY_STORE.md` (target API 36; closed test for personal accounts).
-
----
+| Prompt                 | Kya karta hai                                                                                 |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| `P0-discovery.md`      | No code. Interview (max 15 questions, ek batch) → `docs/discovery.md`                         |
+| `P1-prd.md`            | `docs/PRD.md` fill karo: FR-/US- IDs, Given/When/Then acceptance, non-goals                   |
+| `P2-architecture.md`   | ARCHITECTURE.md, DATA_MODEL.md, API_CONTRACT.md, DESIGN_SYSTEM.md, SECURITY.md + traceability |
+| `P2b-ux-wireframes.md` | UX wireframes: screen inventory, navigation map, low-fi ASCII wireframes, copy table, a11y    |
+| `P3-tasks.md`          | PRD ko vertical-slice tasks me todo → `docs/TASKS.md` + `docs/tasks/T-###.md`                 |
+| `P4-scaffold.md`       | Official generators se apps/web + apps/mobile scaffold, workspace wiring, `pnpm verify`       |
+| `P5-database-auth.md`  | Supabase migrations (RLS, indexes, triggers), generated types, auth, RLS tests                |
+| `P6-feature.md`        | Feature loop — Section 7-T use karo. Ek task = ek chat = ek branch = ek PR                    |
+| `P7-hardening.md`      | Security + quality audit: finding \| severity \| file \| fix table                            |
+| `P8-deploy.md`         | Vercel + Supabase prod + EAS, env matrix, Sentry/PostHog, `/api/health`, backups              |
+| `P9-release.md`        | Release checklist, rollback plan, runbook, CHANGELOG, monitoring plan                         |
+| `P10-play-store.md`    | Google Play launch — verified gates in [`docs/PLAY_STORE.md`](PLAY_STORE.md)                  |
 
 ## 7. Reusable prompts
 
-### T — Task prompt (P6 ka core)
+Each prompt is a file in [`../prompts/`](../prompts/) — that file is authoritative.
 
-```text
-Attach: @AGENTS.md @docs/PROGRESS.md @docs/ARCHITECTURE.md @docs/tasks/T-xxx.md
-
-Task: implement T-xxx exactly as written in its task file.
-Step 1 (no code): restate the goal, acceptance criteria, files you will touch, and
-any ambiguity. List assumptions. Wait for my "go".
-Step 2: write failing tests first. Show them failing.
-Step 3: implement, touching only allowed files. No new dependencies, no refactors.
-Step 4: run `pnpm verify` and paste the real output.
-Step 5: self-review against the checklist in AGENTS.md; list risks.
-Step 6: update docs/PROGRESS.md (including any "Gotchas learned").
-If anything is unknown, say "I don't know" and ask. Never guess APIs or names.
-```
-
-### D — Debug prompt
-
-```text
-Attach: @AGENTS.md + the failing file(s) + paste logs.
-Problem: <expected> vs <actual>. Repro steps: <steps>. Started after: <commit/change>.
-Do NOT write code yet. Give me: (1) the 3 most likely root causes ranked, with the
-evidence for each from the logs/code, (2) one cheap experiment to confirm each,
-(3) what you need from me. After I confirm the cause, propose the minimal fix
-plus a regression test.
-```
-
-### R — Context recovery (naya chat ya AI bhatak gaya)
-
-```text
-Read @AGENTS.md @docs/PROGRESS.md @docs/ARCHITECTURE.md and the current task file.
-Then, without writing code, tell me in <=10 lines: where the project stands, what
-the current task is, what is already done, what is forbidden, and what you think
-the next step is. List anything that contradicts between these docs. Wait for my confirmation.
-```
-
-### V — Review prompt (second-AI reviewer, fresh chat)
-
-```text
-Act as a skeptical senior reviewer. Attach the diff (@Git or paste) and
-@docs/tasks/T-xxx.md @AGENTS.md.
-Check: does it meet every acceptance criterion? scope creep? invented APIs/names?
-missing error/empty/loading states? security (authz, validation, secrets)? tests
-meaningful (or edited to pass)? performance? Output: Must-fix / Should-fix / Nits,
-each with file and line. Do not modify code.
-```
-
-### H — Hallucination audit
-
-```text
-Audit the last changes for hallucinations. For every external import, package,
-function call, env var, table/column and file path introduced: show where it is
-defined (file path / official doc URL / `npm view` output). Mark anything you cannot
-prove as UNVERIFIED. Then fix or remove all UNVERIFIED items.
-```
-
-### M — Memory update (har task ke baad)
-
-```text
-Update docs/PROGRESS.md: mark the finished task, update current state, record
-decisions (create an ADR if a real choice was made), list new tech debt, add any
-verified commands, and add every mistake you made this session to "Gotchas learned"
-with the correct fact. Keep it concise. Show the diff.
-```
-
----
+| Prompt          | Kab use karo                                                                            |
+| --------------- | --------------------------------------------------------------------------------------- |
+| `T-task.md`     | P6 ka core: ek task implement karo (tests-first, scope fence, verify, PROGRESS update)  |
+| `D-debug.md`    | Bug: pehle 3 ranked root causes + cheap experiments, phir minimal fix + regression test |
+| `R-recovery.md` | Naya chat ya AI bhatak gaya: <=10 lines me current state restate karo                   |
+| `V-review.md`   | Second-AI reviewer, fresh chat: adversarial review                                      |
+| `H-audit.md`    | Hallucination audit: UNVERIFIED claims dhoondo                                          |
+| `M-memory.md`   | Har task ke baad: PROGRESS.md + gotchas update                                          |
 
 ## 8. How to use this repo on your vibe-coding platform
 
@@ -828,28 +317,37 @@ with the correct fact. Keep it concise. Show the diff.
 
 > **Version policy:** Yahan versions likhe nahi. Bootstrap ke waqt official generators se latest stable lo, **exact version pin** karo, lockfile commit karo, aur AI se docs ke against verify karwao. Stack default hai: badalna ho to ADR likho.
 
-| Layer            | Choice                                                          | Anti-hallucination reason                    | Alternative        |
-| ---------------- | --------------------------------------------------------------- | -------------------------------------------- | ------------------ |
-| Monorepo         | pnpm workspaces + Turborepo                                     | Ek jagah shared types, ek `verify`           | Nx                 |
-| Language         | TypeScript (strict)                                             | Compiler AI ki galtiyan pakadta hai          | n/a                |
-| Web              | Next.js (App Router) + React                                    | Bada ecosystem, official docs                | Remix, SvelteKit   |
-| Styling / UI     | Tailwind CSS + shadcn/ui                                        | Code tumhare repo me, AI padh sakta hai      | Mantine            |
-| Mobile           | Expo (React Native) + Expo Router                               | Managed workflow = kam native errors         | Flutter            |
-| State / fetching | TanStack Query                                                  | Ek hi data-fetch pattern                     | SWR                |
-| Forms            | React Hook Form + Zod                                           | Schema shared validation                     | n/a                |
-| Validation       | Zod (packages/shared)                                           | Ek schema: web + mobile + API                | Valibot            |
-| API              | REST `/api/v1` via Next.js Route Handlers                       | Web aur mobile ek hi contract use karte hain | tRPC               |
-| Backend/DB       | Supabase (Postgres, Auth, Storage, Realtime)                    | SQL migrations + generated types             | Neon + Auth.js     |
-| DB access        | supabase-js + repository layer + generated types                | Ek hi tarika                                 | Drizzle / Prisma   |
-| Authorization    | Postgres RLS                                                    | DB level security, AI bypass nahi kar paata  | App-level checks   |
-| Payments (opt.)  | Stripe (+ webhooks)                                             | Idempotency keys, signed webhooks            | Razorpay           |
-| Email (opt.)     | Resend                                                          | Simple API                                   | Postmark           |
-| AI/agents (opt.) | Provider-agnostic LLM gateway + Zod tool schemas + eval harness | Prompt versioning, tests for tools           | n/a                |
-| Tests            | Vitest, Testing Library, Playwright (web), Maestro (mobile)     | Tests = deterministic spec                   | Jest, Detox        |
-| Quality          | ESLint, Prettier, Husky, lint-staged, commitlint                | Style debate khatam                          | Biome              |
-| CI/CD            | GitHub Actions, CodeQL, gitleaks, Dependabot                    | Machine reviewers                            | GitLab CI          |
-| Hosting          | Vercel (web), EAS (mobile), Supabase (data)                     | Preview per PR                               | Cloudflare, Fly.io |
-| Observability    | Sentry (errors), PostHog (analytics), `/api/health`             | Production galtiyan jaldi dikhein            | Datadog            |
+| Layer                              | Choice                                                          | Anti-hallucination reason                     | Alternative          |
+| ---------------------------------- | --------------------------------------------------------------- | --------------------------------------------- | -------------------- |
+| Monorepo                           | pnpm workspaces + Turborepo                                     | Ek jagah shared types, ek `verify`            | Nx                   |
+| Language                           | TypeScript (strict)                                             | Compiler AI ki galtiyan pakadta hai           | n/a                  |
+| Web                                | Next.js (App Router) + React                                    | Bada ecosystem, official docs                 | Remix, SvelteKit     |
+| Styling / UI                       | Tailwind CSS + shadcn/ui                                        | Code tumhare repo me, AI padh sakta hai       | Mantine              |
+| Mobile                             | Expo (React Native) + Expo Router                               | Managed workflow = kam native errors          | Flutter              |
+| State / fetching                   | TanStack Query                                                  | Ek hi data-fetch pattern                      | SWR                  |
+| Forms                              | React Hook Form + Zod                                           | Schema shared validation                      | n/a                  |
+| Validation                         | Zod (packages/shared)                                           | Ek schema: web + mobile + API                 | Valibot              |
+| API                                | REST `/api/v1` via Next.js Route Handlers                       | Web aur mobile ek hi contract use karte hain  | tRPC                 |
+| Backend/DB                         | Supabase (Postgres, Auth, Storage, Realtime)                    | SQL migrations + generated types              | Neon + Auth.js       |
+| DB access                          | supabase-js + repository layer + generated types                | Ek hi tarika                                  | Drizzle / Prisma     |
+| Authorization                      | Postgres RLS                                                    | DB level security, AI bypass nahi kar paata   | App-level checks     |
+| Payments (physical goods/services) | Stripe / Razorpay + signed webhooks                             | Idempotency keys, signed webhooks             | n/a                  |
+| Payments (digital goods, Android)  | Google Play Billing (direct ya wrapper service)                 | Policy-driven; Stripe yahan galat default hai | n/a                  |
+| Push                               | `expo-notifications` + FCM                                      | Official docs, real-device test               | OneSignal            |
+| Deep links                         | Android App Links + Expo Router linking                         | `assetlinks.json` se verifiable               | n/a                  |
+| Account deletion                   | In-app flow + public web URL                                    | Play policy requirement                       | n/a                  |
+| Android health                     | Play Console Android vitals + Sentry                            | Prod crashes/ANRs jaldi dikhein               | Firebase Crashlytics |
+| Email (opt.)                       | Resend                                                          | Simple API                                    | Postmark             |
+| AI/agents (opt.)                   | Provider-agnostic LLM gateway + Zod tool schemas + eval harness | Prompt versioning, tests for tools            | n/a                  |
+| Tests                              | Vitest, Testing Library, Playwright (web), Maestro (mobile)     | Tests = deterministic spec                    | Jest, Detox          |
+| Quality                            | ESLint, Prettier, Husky, lint-staged, commitlint                | Style debate khatam                           | Biome                |
+| CI/CD                              | GitHub Actions, CodeQL, gitleaks, Dependabot                    | Machine reviewers                             | GitLab CI            |
+| Hosting                            | Vercel (web), EAS (mobile), Supabase (data)                     | Preview per PR                                | Cloudflare, Fly.io   |
+| Observability                      | Sentry (errors), PostHog (analytics), `/api/health`             | Production galtiyan jaldi dikhein             | Datadog              |
+
+> Note: P2 me har row ko current official docs/policy se verify karke ADR me likho —
+> khaas taur par Play Billing vs Stripe (Play Payments policy badalti rehti hai; launch
+> se pehle Play Console policy center me verify karo).
 
 ---
 
@@ -929,6 +427,18 @@ docs/ • prompts/ • scripts/ • .github/ • .cursor/
 ### 10.5 Data model starter (generic; P2 me product-specific banega)
 
 ```sql
+-- Shared helper: keep updated_at honest
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
 -- profiles: 1-1 with auth.users
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -938,8 +448,39 @@ create table public.profiles (
   updated_at timestamptz not null default now()
 );
 alter table public.profiles enable row level security;
-create policy "profiles: owner read"   on public.profiles for select using (auth.uid() = id);
-create policy "profiles: owner update" on public.profiles for update using (auth.uid() = id);
+
+create policy "profiles: owner read" on public.profiles
+  for select to authenticated
+  using ((select auth.uid()) = id);
+
+create policy "profiles: owner update" on public.profiles
+  for update to authenticated
+  using ((select auth.uid()) = id)
+  with check ((select auth.uid()) = id);
+-- No insert/delete policy on purpose: the row is created by the trigger below
+-- and removed by the auth.users cascade.
+
+create trigger profiles_set_updated_at
+  before update on public.profiles
+  for each row execute function public.set_updated_at();
+
+-- Create the profile row when a user signs up
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.profiles (id, display_name)
+  values (new.id, new.raw_user_meta_data ->> 'display_name');
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
 
 -- Pattern for every user-owned table
 create table public.items (
@@ -951,9 +492,20 @@ create table public.items (
 );
 create index items_user_id_idx on public.items(user_id);
 alter table public.items enable row level security;
+
 create policy "items: owner all" on public.items
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+create trigger items_set_updated_at
+  before update on public.items
+  for each row execute function public.set_updated_at();
 ```
+
+> `(select auth.uid())` ko subselect me wrap karna Supabase ka documented performance
+> pattern hai (per-row function call ke bajaye ek baar evaluate hota hai). `security definer`
+> function me `set search_path = ''` rakho. RLS tests chalao: anon denied, cross-user denied.
 
 ### 10.6 Auth flow
 
@@ -994,100 +546,12 @@ RLS everywhere • Zod at every boundary • authz on every route • no secrets
 
 ---
 
-## 11. PRD template (`docs/PRD.md`)
+## 11. PRD template
 
-```md
-# PRD — <Product name>
-
-Version: 0.1 Owner: <name> Status: draft | approved Last updated: <date>
-
-## 1. Overview
-
-- Problem statement (who suffers, how, how often):
-- Vision (one sentence):
-- Why now:
-
-## 2. Target users & personas
-
-| Persona | Description | Top need | Platform |
-| ------- | ----------- | -------- | -------- |
-
-## 3. Goals, non-goals, success metrics
-
-- Goals (measurable):
-- Non-goals (explicitly NOT doing):
-- Success metrics (KPI, baseline, target, date):
-
-## 4. User stories (each with ID)
-
-- US-001: As a <persona>, I want <action>, so that <outcome>.
-
-## 5. Functional requirements
-
-| ID     | Requirement | Priority (P0/P1/P2) | Acceptance criteria (Given/When/Then) |
-| ------ | ----------- | ------------------- | ------------------------------------- |
-| FR-001 |             | P0                  | Given… When… Then…                    |
-
-## 6. Non-functional requirements
-
-- Performance (e.g. LCP, API p95):
-- Availability / reliability:
-- Security & privacy (PII, data retention, GDPR/DPDP as applicable):
-- Accessibility (WCAG level):
-- Localization:
-- Offline behavior (mobile):
-- Browser/device support (min Android version, browsers):
-
-## 7. Screens / routes
-
-| Screen | Platform | Purpose | States (loading/empty/error) |
-| ------ | -------- | ------- | ---------------------------- |
-
-## 8. Data entities (business view)
-
-| Entity | Key fields | Owner | Retention |
-| ------ | ---------- | ----- | --------- |
-
-## 9. Integrations
-
-| Service | Purpose | Failure behavior |
-| ------- | ------- | ---------------- |
-
-## 10. Monetization & pricing (if any)
-
-## 11. Milestones
-
-| Milestone            | Scope (FR IDs) | Exit criteria | Target date |
-| -------------------- | -------------- | ------------- | ----------- |
-| M1 Foundation + Auth |                |               |             |
-| M2 Core feature      |                |               |             |
-| M3 Hardening + Beta  |                |               |             |
-| M4 Launch            |                |               |             |
-
-## 12. Risks & mitigations
-
-| Risk | Likelihood | Impact | Mitigation |
-| ---- | ---------- | ------ | ---------- |
-
-## 13. Assumptions
-
-## 14. Open questions (never silently decided)
-
-## 15. Definition of Done (product level)
-
-- All P0 FRs pass acceptance tests (automated where possible)
-- `pnpm verify` + e2e green; CodeQL/gitleaks clean
-- Security checklist complete; RLS tests green
-- Monitoring + alerts live; rollback tested
-- Docs updated (README, PROGRESS, CHANGELOG)
-
-## 16. Traceability (filled in P2)
-
-| FR ID | Screen | Endpoint | Table | Test |
-| ----- | ------ | -------- | ----- | ---- |
-```
-
----
+The template is [`docs/PRD.md`](PRD.md) — 16 sections: overview, personas, goals/non-goals,
+user stories, functional + non-functional requirements, screens, data entities,
+integrations, monetization, milestones, risks, assumptions, open questions, Definition
+of Done, traceability. P1 fills it; P2b adds UX wireframes in [`docs/UX.md`](UX.md).
 
 ## 12. Troubleshooting playbook
 
