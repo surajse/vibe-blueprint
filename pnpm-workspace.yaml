@@ -6,7 +6,7 @@ packages:
 # Bump here only (and verify with `npm view <pkg> version`).
 catalog:
   '@eslint/js': 10.0.1
-  eslint: 10.12.0
+  eslint: 10.13.0
   typescript: 5.9.3
-  typescript-eslint: 8.71.0
-  vitest: 4.1.11
+  typescript-eslint: 8.72.0
+  vitest: 4.1.12
